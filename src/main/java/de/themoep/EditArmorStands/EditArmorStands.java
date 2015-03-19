@@ -331,7 +331,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 selectedArmorStands.put(event.getPlayer().getUniqueId(), event.getRightClicked().getUniqueId());
                 selectCommand.remove(event.getPlayer().getUniqueId());
 
-                event.getPlayer().sendMessage(ChatColor.GREEN + "Selected ArmorStand at " + event.getRightClicked().getLocation().getBlockX() + "/" + event.getRightClicked().getLocation().getBlockY() + "/" + event.getRightClicked().getLocation().getBlockZ() + "!");
+                event.getPlayer().sendMessage(ChatColor.GREEN + "Selected ArmorStand at " + ChatColor.YELLOW + event.getRightClicked().getLocation().getBlockX() + "/" + event.getRightClicked().getLocation().getBlockY() + "/" + event.getRightClicked().getLocation().getBlockZ() + ChatColor.GREEN + "!");
                 event.getPlayer().sendMessage(ChatColor.GREEN + "You can now use " + ChatColor.YELLOW + "/eas <option> <value> " + ChatColor.GREEN + "to edit the properties of this ArmorStand! To exit the editing mode run " + ChatColor.YELLOW + "/eas exit" + ChatColor.GREEN + "!");
             } else if (event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
                 ItemStack hi = event.getPlayer().getItemInHand();
