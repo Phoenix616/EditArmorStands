@@ -4,7 +4,7 @@ package de.themoep.EditArmorStands;
  * Created by Phoenix616 on 19.03.2015.
  */
 public enum BodyPart {
-    ROTATION    (new String[]{"r, full, f, fullbody, fb"}),
+    FULL    (new String[]{"f, fullbody, fb, rotation, r"}),
     HEAD    (new String[]{"h"}),
     BODY    (new String[]{"b"}),
     LEFTARM (new String[]{"la"}),
