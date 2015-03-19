@@ -5,8 +5,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import static de.themoep.EditArmorStands.Axis.PITCH;
-
 /**
  * Created by Phoenix616 on 18.03.2015.
  */
