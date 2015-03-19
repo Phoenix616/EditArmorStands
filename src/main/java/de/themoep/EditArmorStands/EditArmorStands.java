@@ -57,7 +57,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         if (sender.hasPermission("editarmorstands.command.name.colored")) {
                             name = ChatColor.translateAlternateColorCodes('&', name);
                         }
-                        as.setCustomName(name.trim());
+                        as.setCustomName(name.trim() + ChatColor.RESET);
                         sender.sendMessage(ChatColor.GREEN + "Set the ArmorStand's name to " + ChatColor.RESET + as.getCustomName() + ChatColor.GREEN + "!");
 
                     } else {
@@ -179,12 +179,13 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                                     angle += l.getPitch();
                                 l.setPitch(angle);
                                 as.teleport(l);
-                            } else if (args[0].equalsIgnoreCase("y") || args[0].equalsIgnoreCase("yaw")) {
+                            } else if (args[0].equalsIgnoreCase("y") || args[0].equalsIgnoreCase("yaw") || args[0].equalsIgnoreCase("r") || args[0].equalsIgnoreCase("rotate")) {
                                 Location l = as.getLocation();
                                 if(relative)
                                     angle += l.getYaw();
                                 l.setYaw(angle);
                                 as.teleport(l);
+                                sender.sendMessage(ChatColor.GREEN + "Set ArmorStands rotation to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
                             } else {
                                 sender.sendMessage(ChatColor.RED + "Sorry but the option " + args[0] + " doesn't exist!");
                             }
@@ -341,7 +342,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         if (event.getPlayer().hasPermission("editarmorstands.nametag.name.colored")) {
                             name = ChatColor.translateAlternateColorCodes('&', name);
                         }
-                        event.getRightClicked().setCustomName(name);
+                        event.getRightClicked().setCustomName(name + ChatColor.RESET);
                         event.getRightClicked().setCustomNameVisible(true);
                         if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
                             if (hi.getAmount() > 1) {

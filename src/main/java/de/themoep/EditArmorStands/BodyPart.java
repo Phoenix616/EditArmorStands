@@ -4,17 +4,17 @@ package de.themoep.EditArmorStands;
  * Created by Phoenix616 on 19.03.2015.
  */
 public enum BodyPart {
-    FULL    ("f"),
-    HEAD    ("h"),
-    BODY    ("b"),
-    LEFTARM ("la"),
-    RIGHTARM("ra"),
-    LEFTLEG ("ll"),
-    RIGHTLEG("rl");
+    ROTATION    (new String[]{"r, full, f, fullbody, fb"}),
+    HEAD    (new String[]{"h"}),
+    BODY    (new String[]{"b"}),
+    LEFTARM (new String[]{"la"}),
+    RIGHTARM(new String[]{"ra"}),
+    LEFTLEG (new String[]{"ll"}),
+    RIGHTLEG(new String[]{"rl"});
 
-    private String alias;
+    private String[] alias;
     
-    BodyPart(String alias) {
+    BodyPart(String[] alias) {
         this.alias = alias;
     }
 
@@ -25,8 +25,9 @@ public enum BodyPart {
             return valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
             for(BodyPart p : values())
-                if(p.alias.equalsIgnoreCase(name))
-                    return p;
+                for(String a : p.alias)
+                    if(a.equalsIgnoreCase(name))
+                        return p;
         }
         throw new IllegalArgumentException("No enum const BodyPart." + name.toUpperCase());
     }
