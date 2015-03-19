@@ -169,7 +169,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                             angle += l.getPitch();
                         l.setPitch(angle);
                         as.teleport(l);
-                    } else if (args[0].equalsIgnoreCase("y") || args[0].equalsIgnoreCase("yaw") || args[0].equalsIgnoreCase("r") || args[0].equalsIgnoreCase("rotate")) {
+                    } else if (args[0].equalsIgnoreCase("y") || args[0].equalsIgnoreCase("yaw") || args[0].equalsIgnoreCase("r") || args[0].equalsIgnoreCase("rotate") || args[0].equalsIgnoreCase("rotation")) {
                         Location l = as.getLocation();
                         if(relative)
                             angle += l.getYaw();
