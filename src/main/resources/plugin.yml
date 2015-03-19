@@ -1,0 +1,100 @@
+name: EditArmorStands
+main: de.themoep.EditArmorStands.EditArmorStands
+version: 1.1.2
+commands:
+   editarmorstand:      
+      aliases: [editas, eas]
+      description: Command to edit armor stands
+      usage: |
+             /<command>
+              - Rightclick an ArmorStand in the next 10s to select it
+             /<command> exit
+              - Exit the editing mode
+             /<command> name <name>
+              - Set the ArmorStand's name, use & for colorcodes
+             /<command> [namevisible|gravity|visible|base|arms|size]
+              - Toggle the option
+             /<command> <bodypart> [roll|yaw|pitch] <degree>
+              - Set an angle, use ~ for relatives
+             /<command> <bodypart> <x> <y> <z>
+              - Set all angles of a body part at once, use ~ for relatives
+             Bodyparts: head, body, leftarm, rightarm, leftleg, rightleg. 
+             (r, y, p, h, ra, ll etc. are possible!)
+      permissions: editarmorstands.command
+permissions:
+   editarmorstands.*:
+      description: Gives access to all EditArmorStands features
+      children:
+         editarmorstands.command.*: true
+         editarmorstands.nametag.*: true
+   editarmorstands.user:
+      description: A collection of permissions a normal user should have.
+      children:
+         editarmorstands.command: true
+         editarmorstands.command.gravity: true
+         editarmorstands.command.visible: true
+         editarmorstands.command.base: true
+         editarmorstands.command.arms: true
+         editarmorstands.command.size: true
+         editarmorstands.command.pose: true
+         editarmorstands.nametag.name: true
+         editarmorstands.nametag.name.clear: true
+   editarmorstands.command.*:
+      description: Gives access to all EditArmorStands commands
+      children:
+         editarmorstands.command: true
+         editarmorstands.command.name: true
+         editarmorstands.command.name.colored: true
+         editarmorstands.command.namevisible: true
+         editarmorstands.command.vulnerable: true
+         editarmorstands.command.gravity: true
+         editarmorstands.command.visible: true
+         editarmorstands.command.base: true
+         editarmorstands.command.arms: true
+         editarmorstands.command.size: true
+         editarmorstands.command.pose: true
+   editarmorstands.nametag.*:
+      description: Gives access to all NameTag options
+      children:
+         editarmorstands.nametag.name: true
+         editarmorstands.nametag.name.colored: true
+         editarmorstands.nametag.name.clear: true
+   editarmorstands.command.name:
+      description: Allows a player to set the name of an armorstand
+      default: op
+   editarmorstands.command.name.colored:
+      description: Allows a player to set colored names
+      default: op
+   editarmorstands.command.namevisible:
+      description: Allows a player to make custom names visible
+      default: op
+   editarmorstands.command.vulnerable:
+      description: Allows a player to make an armorstand invulnerable/vulnerable
+      default: op
+   editarmorstands.command.gravity:
+      description: Allows a player to turn gravity on/off on a an armorstand
+      default: op
+   editarmorstands.command.visible:
+      description: Allows a player to make an armorstand visible/invisible
+      default: op
+   editarmorstands.command.base:
+      description: Allows a player to make an armorstands base visible/invisible
+      default: op
+   editarmorstands.command.arms:
+      description: Makes it so a player can gie/remove arms from an armorstand
+      default: op
+   editarmorstands.command.size:
+      description: Allows a player to change the size of an armorstand
+      default: op
+   editarmorstands.command.pose:
+      description: Allows a player to pose the armorstand
+      default: op
+   editarmorstands.nametag.name:
+      description: Allows a player to name armorstands via rightclick with a nametag
+      default: op
+   editarmorstands.nametag.name.colored:
+      description: Allows a player to use colored names via nametags
+      default: op
+   editarmorstands.nametag.name.clear:
+      description: Allows a player to clear the name of an armorstand with an empty nametag
+      default: op
