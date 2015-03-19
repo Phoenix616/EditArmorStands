@@ -12,6 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -321,7 +322,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
         return true;
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onArmorStandClick(PlayerInteractAtEntityEvent event) {
         if(!event.isCancelled() && event.getRightClicked().getType() == EntityType.ARMOR_STAND) {
             if(selectCommand.containsKey(event.getPlayer().getUniqueId()) && selectCommand.get(event.getPlayer().getUniqueId()) + 10 * 1000 > System.currentTimeMillis()) {
