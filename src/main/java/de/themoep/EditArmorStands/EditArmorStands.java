@@ -47,23 +47,34 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
                 waitingCommands.put(p.getUniqueId(), args);
             } else {
-                if(selectedArmorStands.containsKey(p.getUniqueId())) {
-                    UUID asid = selectedArmorStands.get(p.getUniqueId());
-                    ArmorStand as = null;
-                    for(Entity e : p.getNearbyEntities(64,64,64))
-                        if(e.getType() == EntityType.ARMOR_STAND && e.getUniqueId() == asid) {
-                            as = (ArmorStand) e;
-                            break;
-                        }
-                    if(as != null) {
-                        return calculateAction(p, as, args);
+                if(args[0].equalsIgnoreCase("exit")) {
+                    if(selectedArmorStands.remove(p.getUniqueId()) != null) {
+                        sender.sendMessage(ChatColor.GREEN + "Exited ArmorStand editing mode!");
                     } else {
-                        sender.sendMessage(ChatColor.RED + "You can only edit ArmorStands in a 64 block radius!");
+                        sender.sendMessage(ChatColor.RED + "You are currently not editing any ArmorStands!");
                     }
+                } else if(args[0].equalsIgnoreCase("usage") || args[0].equalsIgnoreCase("help") ) {
+                    sender.sendMessage(ChatColor.GREEN + "EditArmorStands v" + this.getDescription().getVersion() + " Usage:");
+                    return false;
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Rightclick on the ArmorStand you want to edit in the next 10s!");
-                    clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
-                    waitingCommands.put(p.getUniqueId(), args);
+                    if (selectedArmorStands.containsKey(p.getUniqueId())) {
+                        UUID asid = selectedArmorStands.get(p.getUniqueId());
+                        ArmorStand as = null;
+                        for (Entity e : p.getNearbyEntities(64, 64, 64))
+                            if (e.getType() == EntityType.ARMOR_STAND && e.getUniqueId() == asid) {
+                                as = (ArmorStand) e;
+                                break;
+                            }
+                        if (as != null) {
+                            return calculateAction(p, as, args);
+                        } else {
+                            sender.sendMessage(ChatColor.RED + "You can only edit ArmorStands in a 64 block radius!");
+                        }
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "Rightclick on the ArmorStand you want to edit in the next 10s!");
+                        clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
+                        waitingCommands.put(p.getUniqueId(), args);
+                    }
                 }
             }
         } else {
