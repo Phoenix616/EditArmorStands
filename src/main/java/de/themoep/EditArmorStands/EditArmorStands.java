@@ -222,12 +222,17 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                                 }
                             }
                             if (asp != null) {
-                                    
-                                    if (asp.setSingleAngle(args[0], args[1], angle, relative)) {
-                                        sender.sendMessage(ChatColor.GREEN + "Set " + args[0] + "'s " + args[1] + " to " + args[2] + "!");
+                                try {
+                                    BodyPart bp = BodyPart.fromString(args[0]);
+                                    Axis a = Axis.fromString(args[1]);
+                                    if (asp.setSingleAngle(bp, a, angle, relative)) {
+                                        sender.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s " + a.name().toLowerCase() + " to " + args[2] + "!");
                                     } else {
-                                        sender.sendMessage(ChatColor.RED + "Sorry but the option " + args[0] + " doesn't exist!");
+                                        sender.sendMessage(ChatColor.RED + "Fatal error! Please report this bug immediately! asp.setSingleAngle(" + bp + ", " + a + ", " + angle + ", " + relative + ") is false?");
                                     }
+                                } catch (IllegalArgumentException e) {
+                                    sender.sendMessage(ChatColor.RED + e.getMessage());
+                                }
                             } else {
                                 sender.sendMessage(ChatColor.RED + "You can only edit ArmorStands in a 64 block radius!");
                             }
@@ -283,11 +288,17 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                                         z = Integer.parseInt(args[3].substring(1));
                                 } else
                                     z = Integer.parseInt(args[3]);
-
-                                if (asp.setEulerAngle(args[0], x, y, z, relative)) {
-                                    sender.sendMessage(ChatColor.GREEN + "Set " + args[0] + " to " + args[1] + " " + args[2] + " " + args[3] + "!");
-                                } else
-                                    sender.sendMessage(ChatColor.RED + "Sorry but the option " + args[0] + " doesn't exist!");
+                                
+                                try {
+                                    BodyPart bp = BodyPart.fromString(args[0]);
+                                    if (asp.setEulerAngle(bp, x, y, z, relative)) {
+                                        sender.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + args[1] + " " + args[2] + " " + args[3] + "!");
+                                    } else {
+                                        sender.sendMessage(ChatColor.RED + "Fatal error! Please report this bug immediately! asp.setEulerAngle(" + bp + ", " + x + ", " + y + ", " + z + ", " + relative + ") is false?");
+                                    }
+                                } catch (IllegalArgumentException e) {
+                                    sender.sendMessage(ChatColor.RED + e.getMessage());
+                                }
 
                             } catch (NumberFormatException e) {
                                 sender.sendMessage(ChatColor.RED + "One of " + args[1] + ", " + args[2] + " or " + args[3] + " is not a valid number!");
