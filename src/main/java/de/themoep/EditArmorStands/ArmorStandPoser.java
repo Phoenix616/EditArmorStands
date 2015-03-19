@@ -16,30 +16,49 @@ public class ArmorStandPoser {
         this.as = as;
     }
 
-    public boolean setSingleAngle(BodyPart part, Axis axis, int angle, boolean relative) {
+    public int setSingleAngle(BodyPart part, Axis axis, int angle, boolean relative) {
         try {
-            EulerAngle ea;
             if(part == BodyPart.HEAD) {
-                this.as.setHeadPose(getEulerAngleFromInput(axis, this.as.getHeadPose(), angle, relative));
-
+                EulerAngle ea = this.as.getHeadPose();
+                this.as.setHeadPose(getEulerAngleFromInput(axis, ea, angle, relative));
+                if(relative) {
+                    double rad = 0;
+                    switch(axis) {
+                        case YAW:
+                            rad = ea.getX();
+                            break;
+                        case PITCH:
+                            rad = ea.getY();
+                            break;
+                        case ROLL:
+                            rad = ea.getZ();
+                            break;
+                    }
+                    return (int) Math.toDegrees(rad);
+                }
             } else if(part == BodyPart.BODY) {
                 this.as.setBodyPose(getEulerAngleFromInput(axis, this.as.getBodyPose(), angle, relative));
+                return (relative) ?(int) Math.toDegrees(this.as.getBodyPose().getX()) : angle;
 
             } else if(part == BodyPart.LEFTARM) {
                 this.as.setLeftArmPose(getEulerAngleFromInput(axis, this.as.getLeftArmPose(), angle, relative));
+                return (relative) ?(int) Math.toDegrees(this.as.getLeftArmPose().getX()) : angle;
 
             } else if(part == BodyPart.LEFTLEG) {
                 this.as.setLeftLegPose(getEulerAngleFromInput(axis, this.as.getLeftLegPose(), angle, relative));
+                return (relative) ?(int) Math.toDegrees(this.as.getLeftLegPose().getX()) : angle;
 
             } else if(part == BodyPart.RIGHTARM) {
                 this.as.setRightArmPose(getEulerAngleFromInput(axis, this.as.getRightArmPose(), angle, relative));
+                return (relative) ?(int) Math.toDegrees(this.as.getRightArmPose().getX()) : angle;
 
             } else if(part == BodyPart.RIGHTLEG) {
                 this.as.setRightLegPose(getEulerAngleFromInput(axis, this.as.getRightLegPose(), angle, relative));
+                return (relative) ?(int) Math.toDegrees(this.as.getRightLegPose().getX()) : angle;
             }
-            return true;
+            return angle;
         } catch (NullPointerException e) {
-            return false;
+            throw new IllegalArgumentException("Null pointer at asp.setSingleAngle(" + part + ", " + axis + ", " + angle + ", " + relative + ")!");
         }
     }
 
@@ -64,41 +83,41 @@ public class ArmorStandPoser {
         return null;
     }
 
-    public boolean setEulerAngle(BodyPart part, int x, int y, int z, boolean relative) {
+    public int[] setEulerAngle(BodyPart part, int x, int y, int z, boolean relative) throws IllegalArgumentException{
         EulerAngle ea;
         switch(part) {
             case HEAD:
                 ea = this.as.getHeadPose();
                 ea = getNewEulerAngle(ea, x, y, z, relative);
                 this.as.setHeadPose(ea);
-                return true;
+                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
             case BODY:
                 ea = this.as.getBodyPose();
                 ea = getNewEulerAngle(ea, x, y, z, relative);
                 this.as.setBodyPose(ea);
-                return true;
+                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
             case LEFTARM:
                 ea = this.as.getLeftArmPose();
                 ea = getNewEulerAngle(ea, x, y, z, relative);
                 this.as.setLeftArmPose(ea);
-                return true; 
+                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
             case LEFTLEG:
                 ea = this.as.getLeftLegPose();
                 ea = getNewEulerAngle(ea, x, y, z, relative);
                 this.as.setLeftLegPose(ea);
-                return true;
+                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
             case RIGHTARM:
                 ea = this.as.getRightArmPose();
                 ea = getNewEulerAngle(ea, x, y, z, relative);
                 this.as.setRightArmPose(ea);
-                return true;
+                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
             case RIGHTLEG:
                 ea = this.as.getRightLegPose();
                 ea = getNewEulerAngle(ea, x, y, z, relative);
                 this.as.setRightLegPose(ea);
-                return true;
+                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
             default:
-                return false;
+                throw new IllegalArgumentException("We encountered an error. Please report that immediately to a dev! asp.setEulerAngle(" + part + ", " + x + ", " + y + ", " + z + ", " + relative + ")");
         }
     }
 

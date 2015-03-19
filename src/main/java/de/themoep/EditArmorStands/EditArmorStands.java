@@ -216,11 +216,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                             ArmorStandPoser asp = new ArmorStandPoser(as);
                             BodyPart bp = BodyPart.fromString(args[0]);
                             Axis a = Axis.fromString(args[1]);
-                            if (asp.setSingleAngle(bp, a, angle, relative)) {
-                                player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s " + a.name().toLowerCase() + " to " + args[2] + "!");
-                            } else {
-                                player.sendMessage(ChatColor.RED + "Fatal error! Please report this bug immediately! asp.setSingleAngle(" + bp + ", " + a + ", " + angle + ", " + relative + ") is false?");
-                            }
+                            int n = asp.setSingleAngle(bp, a, angle, relative);
+                            player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s " + a.name().toLowerCase() + " to " + n + "!");
                         } catch (IllegalArgumentException e) {
                             player.sendMessage(ChatColor.RED + e.getMessage());
                         }
@@ -268,11 +265,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
                     try {
                         BodyPart bp = BodyPart.fromString(args[0]);
-                        if (asp.setEulerAngle(bp, x, y, z, relative)) {
-                            player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + args[1] + " " + args[2] + " " + args[3] + "!");
-                        } else {
-                            player.sendMessage(ChatColor.RED + "Fatal error! Please report this bug immediately! asp.setEulerAngle(" + bp + ", " + x + ", " + y + ", " + z + ", " + relative + ") is false?");
-                        }
+                        int[] r = asp.setEulerAngle(bp, x, y, z, relative);
+                        player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + r[1] + " " + r[2] + " " + r[3] + "!");
                     } catch (IllegalArgumentException e) {
                         player.sendMessage(ChatColor.RED + e.getMessage());
                     }
