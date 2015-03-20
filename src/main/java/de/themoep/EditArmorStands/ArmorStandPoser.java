@@ -129,9 +129,9 @@ public class ArmorStandPoser {
     private EulerAngle getNewEulerAngle(EulerAngle ea, int[] angles, boolean[] relatives) {
         if(angles.length >= 3 && relatives.length >= 3) {
             ea = new EulerAngle(
-                            (relatives[0]) ? Math.toRadians(angles[0]) + ea.getX() : ea.getX(),
-                            (relatives[1]) ? Math.toRadians(angles[1]) + ea.getY() : ea.getY(),
-                            (relatives[2]) ? Math.toRadians(angles[2]) + ea.getZ() : ea.getZ()
+                            (relatives[0]) ? Math.toRadians(angles[0]) + ea.getX() : angles[0],
+                            (relatives[1]) ? Math.toRadians(angles[1]) + ea.getY() : angles[1],
+                            (relatives[2]) ? Math.toRadians(angles[2]) + ea.getZ() : angles[2]
                     );
                     return ea;
         } else {
