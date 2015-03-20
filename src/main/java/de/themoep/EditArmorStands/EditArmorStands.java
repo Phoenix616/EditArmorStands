@@ -19,9 +19,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Phoenix616 on 18.03.2015.
@@ -43,39 +41,79 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             Player p = (Player) sender;
 
             if(args.length == 0) {
-                sender.sendMessage(ChatColor.GREEN + "Rightclick on the ArmorStand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
                 clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
                 waitingCommands.put(p.getUniqueId(), args);
-            } else {
-                if(args[0].equalsIgnoreCase("exit")) {
-                    if(selectedArmorStands.remove(p.getUniqueId()) != null) {
-                        sender.sendMessage(ChatColor.GREEN + "Exited ArmorStand editing mode!");
-                    } else {
-                        sender.sendMessage(ChatColor.RED + "You are currently not editing any ArmorStands!");
-                    }
-                } else if(args[0].equalsIgnoreCase("usage") || args[0].equalsIgnoreCase("help") ) {
-                    sender.sendMessage(ChatColor.GREEN + "EditArmorStands v" + this.getDescription().getVersion() + " Usage:");
-                    return false;
+            } else if(args[0].equalsIgnoreCase("exit")) {
+                if(selectedArmorStands.remove(p.getUniqueId()) != null) {
+                    sender.sendMessage(ChatColor.GREEN + "Exited Armor Stand editing mode!");
                 } else {
-                    if (selectedArmorStands.containsKey(p.getUniqueId())) {
-                        UUID asid = selectedArmorStands.get(p.getUniqueId());
-                        ArmorStand as = null;
-                        for (Entity e : p.getNearbyEntities(64, 64, 64))
-                            if (e.getType() == EntityType.ARMOR_STAND && e.getUniqueId() == asid) {
-                                as = (ArmorStand) e;
-                                break;
-                            }
-                        if (as != null) {
-                            calculateAction(p, as, args);
-                        } else {
-                            sender.sendMessage(ChatColor.RED + "You can only edit ArmorStands in a 64 block radius!");
-                        }
-                    } else {
-                        sender.sendMessage(ChatColor.GREEN + "Rightclick on the ArmorStand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
-                                clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
-                        waitingCommands.put(p.getUniqueId(), args);
+                    sender.sendMessage(ChatColor.RED + "You are currently not editing any Armor Stands!");
+                }
+            } else if(args[0].equalsIgnoreCase("usage") || args[0].equalsIgnoreCase("help") ) {
+                sender.sendMessage(ChatColor.GREEN + "EditArmorStands v" + this.getDescription().getVersion() + " Usage:");
+
+                sender.sendMessage(ChatColor.YELLOW + "/editarmorstand " + ChatColor.GREEN + "(Alias: " + ChatColor.YELLOW + "/eas" + ChatColor.GREEN + ")");
+                sender.sendMessage(ChatColor.GREEN  + " - Rightclick an Armor Stand in the next 10s to select it");
+                sender.sendMessage(ChatColor.YELLOW + "/eas exit");
+                sender.sendMessage(ChatColor.GREEN  + " - Exit the editing mode");
+                if(sender.hasPermission("editarmorstands.command.name")) {
+                    sender.sendMessage(ChatColor.YELLOW + "/eas name <name>");
+                    sender.sendMessage(ChatColor.GREEN + " - Set the ArmorStand's name" + (sender.hasPermission("editarmorstands.command.name.colored") ? ", use & for colorcodes" : ""));
+                }
+                String toggles = "";
+                for(String s : new String[]{"namevisible","gravity","visible","base","arms","size"}) {
+                    if(sender.hasPermission("editarmorstands.command." + s)) {
+                        if(toggles.length() > 0)
+                            toggles += "|";
+                        toggles += s;
                     }
                 }
+                if(toggles.length() > 0) {
+                    sender.sendMessage(ChatColor.YELLOW + "/eas [" + toggles + "]");
+                    sender.sendMessage(ChatColor.GREEN + " - Toggle the option");
+                }
+                if(sender.hasPermission("editarmorstands.command.pose")) {
+                    sender.sendMessage(ChatColor.YELLOW + "/eas <bodypart> [pitch|yaw|roll] <degree>");
+                    sender.sendMessage(ChatColor.GREEN + " - Set an angle, use ~ for relatives");
+                    sender.sendMessage(ChatColor.YELLOW + "/eas <bodypart> <pitch> <yaw> <roll>");
+                    sender.sendMessage(ChatColor.GREEN + " - Set all angles of a body part at once, use ~ for relatives");
+                    sender.sendMessage(ChatColor.YELLOW + "Available bodyparts: head, body, leftarm, rightarm, leftleg, rightleg.");
+                    sender.sendMessage(ChatColor.YELLOW + "(Short forms: h, b, la, ra, ll, rl)");
+                }
+            } else {
+                try {
+                    BodyPart.fromString(args[0]);
+                    if(!sender.hasPermission("editarmorstands.command.pose")) {
+                        sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
+                        return true;
+                    }
+                } catch (IllegalArgumentException e) {
+                    if(this.getDescription().getPermissions().contains("editarmorstands.command." + args[0].toLowerCase()) && !sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
+                        sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "The argument " + ChatColor.YELLOW + args[0].toLowerCase() + ChatColor.RED + " doesn't exist. Use " + ChatColor.YELLOW + "/eas help" + ChatColor.RED + " to get all available options!");
+                    }
+                    return true;
+                }
+                if (selectedArmorStands.containsKey(p.getUniqueId())) {
+                    UUID asid = selectedArmorStands.get(p.getUniqueId());
+                    ArmorStand as = null;
+                    for (Entity e : p.getNearbyEntities(64, 64, 64))
+                        if (e.getType() == EntityType.ARMOR_STAND && e.getUniqueId() == asid) {
+                            as = (ArmorStand) e;
+                            break;
+                        }
+                    if (as != null) {
+                        calculateAction(p, as, args);
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "You can only edit Armor Stands in a 64 block radius!");
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
+                            clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
+                    waitingCommands.put(p.getUniqueId(), args);
+                }            
             }
         } else {
             sender.sendMessage(ChatColor.RED + "This command can only be run by a player!");
@@ -87,8 +125,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
         if(args.length == 0) {
             selectedArmorStands.put(player.getUniqueId(), as.getUniqueId());
             clickTimeout.remove(player.getUniqueId());
-            player.sendMessage(ChatColor.GREEN + "Selected ArmorStand at " + ChatColor.YELLOW + as.getLocation().getBlockX() + "/" + as.getLocation().getBlockY() + "/" + as.getLocation().getBlockZ() + ChatColor.GREEN + "!");
-            player.getPlayer().sendMessage(ChatColor.GREEN + "You can now use " + ChatColor.YELLOW + "/eas <option> <value> " + ChatColor.GREEN + "to edit the properties of this ArmorStand! To exit the editing mode run " + ChatColor.YELLOW + "/eas exit" + ChatColor.GREEN + "!");
+            player.sendMessage(ChatColor.GREEN + "Selected Armor Stand at " + ChatColor.YELLOW + as.getLocation().getBlockX() + "/" + as.getLocation().getBlockY() + "/" + as.getLocation().getBlockZ() + ChatColor.GREEN + "!");
+            player.getPlayer().sendMessage(ChatColor.GREEN + "You can now use " + ChatColor.YELLOW + "/eas <option> <value> " + ChatColor.GREEN + "to edit the properties of this Armor Stand! To exit the editing mode run " + ChatColor.YELLOW + "/eas exit" + ChatColor.GREEN + "!");
             return true;
         } else if(args.length > 0 && args[0].equalsIgnoreCase("name")) {
             if(player.hasPermission("editarmorstands.command.name")) {
@@ -100,7 +138,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     name = ChatColor.translateAlternateColorCodes('&', name);
                 }
                 as.setCustomName(name.trim() + ChatColor.RESET);
-                player.sendMessage(ChatColor.GREEN + "Set the ArmorStand's name to " + ChatColor.RESET + as.getCustomName() + ChatColor.GREEN + "!");
+                player.sendMessage(ChatColor.GREEN + "Set the Armor Stand's name to " + ChatColor.RESET + as.getCustomName() + ChatColor.GREEN + "!");
                 return true;
             } else {
                 player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.name");
@@ -109,7 +147,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             if(args[0].equalsIgnoreCase("namevisible")) {
                 if(player.hasPermission("editarmorstands.command.namevisible")) {
                     as.setCustomNameVisible(!as.isCustomNameVisible());
-                    player.sendMessage(ChatColor.GREEN + "The ArmorStand's name is now " + ChatColor.YELLOW + (as.isCustomNameVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
+                    player.sendMessage(ChatColor.GREEN + "The Armor Stand's name is now " + ChatColor.YELLOW + (as.isCustomNameVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
                     return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.namevisible");
@@ -117,7 +155,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             } else if(args[0].equalsIgnoreCase("arms")) {
                 if(player.hasPermission("editarmorstands.command.arms")) {
                     as.setArms(!as.hasArms());
-                    player.sendMessage(ChatColor.GREEN + "ArmorStand has now " + ChatColor.YELLOW + (as.hasArms() ? "" : "no ") + "arms" + ChatColor.GREEN + "!");
+                    player.sendMessage(ChatColor.GREEN + "Armor Stand has now " + ChatColor.YELLOW + (as.hasArms() ? "" : "no ") + "arms" + ChatColor.GREEN + "!");
                     return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.arms");
@@ -125,7 +163,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             } else if(args[0].equalsIgnoreCase("base")) {
                 if(player.hasPermission("editarmorstands.command.base")) {
                     as.setBasePlate(!as.hasBasePlate());
-                    player.sendMessage(ChatColor.GREEN + "ArmorStand has now " + ChatColor.YELLOW + (as.hasBasePlate() ? "a" : "no") + " baseplate" + ChatColor.GREEN + "!");
+                    player.sendMessage(ChatColor.GREEN + "Armor Stand has now " + ChatColor.YELLOW + (as.hasBasePlate() ? "a" : "no") + " baseplate" + ChatColor.GREEN + "!");
                     return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.base");
@@ -133,7 +171,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             } else if(args[0].equalsIgnoreCase("gravity")) {
                 if(player.hasPermission("editarmorstands.command.gravity")) {
                     as.setGravity(!as.hasGravity());
-                    player.sendMessage(ChatColor.GREEN + "ArmorStand has now " + ChatColor.YELLOW + (as.hasGravity() ? "" : "no ") + "gravity" + ChatColor.GREEN + "!");
+                    player.sendMessage(ChatColor.GREEN + "Armor Stand has now " + ChatColor.YELLOW + (as.hasGravity() ? "" : "no ") + "gravity" + ChatColor.GREEN + "!");
                     return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.gravity");
@@ -141,7 +179,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             } else if(args[0].equalsIgnoreCase("size")) {
                 if(player.hasPermission("editarmorstands.command.size")) {
                     as.setSmall(!as.isSmall());
-                    player.sendMessage(ChatColor.GREEN + "ArmorStand is now " + ChatColor.YELLOW + (as.isSmall() ? "small" : "big") + ChatColor.GREEN + "!");
+                    player.sendMessage(ChatColor.GREEN + "Armor Stand is now " + ChatColor.YELLOW + (as.isSmall() ? "small" : "big") + ChatColor.GREEN + "!");
                     return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.size");
@@ -149,7 +187,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             } else if(args[0].equalsIgnoreCase("visible")) {
                 if (player.hasPermission("editarmorstands.command.visible")) {
                     as.setVisible(!as.isVisible());
-                    player.sendMessage(ChatColor.GREEN + "ArmorStand is now " + ChatColor.YELLOW + (as.isVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
+                    player.sendMessage(ChatColor.GREEN + "Armor Stand is now " + ChatColor.YELLOW + (as.isVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
                     return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.visible");
@@ -192,7 +230,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                             angle += l.getYaw();
                         l.setYaw(angle);
                         as.teleport(l);
-                        player.sendMessage(ChatColor.GREEN + "Set ArmorStands rotation to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
+                        player.sendMessage(ChatColor.GREEN + "Set Armor Stand's rotation to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
                         return true;
                     } else {
                         player.sendMessage(ChatColor.RED + "Sorry but the option " + args[0] + " doesn't exist!");
