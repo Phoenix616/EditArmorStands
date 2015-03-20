@@ -95,12 +95,15 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         return true;
                     }
                 } catch (IllegalArgumentException e) {
-                    if(options.contains(args[0].toLowerCase()) && !sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
-                        sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
+                    if(options.contains(args[0].toLowerCase())) {
+                        if(!sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
+                            sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
+                            return true;
+                        }
                     } else {
                         sender.sendMessage(ChatColor.RED + "The argument " + ChatColor.YELLOW + args[0].toLowerCase() + ChatColor.RED + " doesn't exist. Use " + ChatColor.YELLOW + "/eas help" + ChatColor.RED + " to get all available options!");
+                        return true;
                     }
-                    return true;
                 }
                 if (selectedArmorStands.containsKey(p.getUniqueId())) {
                     UUID asid = selectedArmorStands.get(p.getUniqueId());
