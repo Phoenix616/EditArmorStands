@@ -15,7 +15,7 @@ public enum BodyPart {
 
     private String[] alias;
 
-    private static String valuestring = Arrays.toString(Axis.values());
+    private static String valuestring = Arrays.toString(BodyPart.values());
     
     BodyPart(String[] alias) {
         this.alias = alias;
