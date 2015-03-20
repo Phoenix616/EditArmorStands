@@ -266,7 +266,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     try {
                         BodyPart bp = BodyPart.fromString(args[0]);
                         int[] r = asp.setEulerAngle(bp, x, y, z, relative);
-                        player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + ChatColor.YELLOW + r[1] + " " + r[2] + " " + r[3] + ChatColor.GREEN + "!");
+                        player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + ChatColor.YELLOW + r[0] + " " + r[1] + " " + r[2] + ChatColor.GREEN + "!");
                     } catch (IllegalArgumentException e) {
                         player.sendMessage(ChatColor.RED + e.getMessage());
                     }
