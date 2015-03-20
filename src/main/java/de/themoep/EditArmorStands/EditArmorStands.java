@@ -47,11 +47,14 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
                 waitingCommands.put(p.getUniqueId(), args);
             } else if(args[0].equalsIgnoreCase("exit")) {
-                if(selectedArmorStands.remove(p.getUniqueId()) != null) {
+                if(clickTimeout.containsKey(p.getUniqueId()) && clickTimeout.get(p.getUniqueId()) + 10 * 1000 < System.currentTimeMillis()){
+                    sender.sendMessage(ChatColor.GREEN + "Canceled pending click action!");
+                } else{
                     sender.sendMessage(ChatColor.GREEN + "Exited Armor Stand editing mode!");
-                } else {
-                    sender.sendMessage(ChatColor.RED + "You are currently not editing any Armor Stands!");
                 }
+                selectedArmorStands.remove(p.getUniqueId());
+                waitingCommands.remove(p.getUniqueId());
+                clickTimeout.remove(p.getUniqueId());
             } else if(args[0].equalsIgnoreCase("usage") || args[0].equalsIgnoreCase("help") ) {
                 List<String> usage = new ArrayList<String>();
 
