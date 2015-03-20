@@ -6,7 +6,6 @@ import java.util.Arrays;
  * Created by Phoenix616 on 19.03.2015.
  */
 public enum BodyPart {
-    FULL    (new String[]{"f, fullbody, fb, rotation, r"}),
     HEAD    (new String[]{"h"}),
     BODY    (new String[]{"b"}),
     LEFTARM (new String[]{"la"}),
@@ -15,6 +14,8 @@ public enum BodyPart {
     RIGHTLEG(new String[]{"rl"});
 
     private String[] alias;
+
+    private static String valuestring = Arrays.toString(Axis.values());
     
     BodyPart(String[] alias) {
         this.alias = alias;
@@ -31,6 +32,6 @@ public enum BodyPart {
                     if(a.equalsIgnoreCase(name))
                         return p;
         }
-        throw new IllegalArgumentException(name + " is not a body part! Available parts are " + Arrays.toString(BodyPart.values()).toLowerCase());
+        throw new IllegalArgumentException(name + " is not a body part! Available parts are " + valuestring.toLowerCase().substring(1, valuestring.length() - 1));
     }
 }

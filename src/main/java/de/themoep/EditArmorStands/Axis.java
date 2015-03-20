@@ -12,6 +12,8 @@ public enum Axis {
 
     private String[] alias;
 
+    private static String valuestring = Arrays.toString(Axis.values());
+    
     Axis(String[] alias) {
         this.alias = alias;
     }
@@ -27,6 +29,6 @@ public enum Axis {
                     if(a.equalsIgnoreCase(name))
                         return x;
         }
-        throw new IllegalArgumentException(name + " is not an axis! Available axis are " + Arrays.toString(Axis.values()).toLowerCase());
+        throw new IllegalArgumentException(name + " is not an axis! Available axis are " + valuestring.toLowerCase().substring(1, valuestring.length() - 1));
     }
 }

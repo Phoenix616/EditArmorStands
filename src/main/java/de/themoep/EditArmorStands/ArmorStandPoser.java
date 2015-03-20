@@ -141,36 +141,29 @@ public class ArmorStandPoser {
 
 
     public boolean translatePlayerLook(BodyPart part, Location location) {
-        if (part == BodyPart.FULL) {
-            Location l = this.as.getLocation();
-            l.setYaw(location.getYaw());
-            this.as.teleport(l);
-            return true;
-        } else {
-            Vector v = location.getDirection();
-            EulerAngle ea = new EulerAngle(v.getX(), v.getY(), v.getZ());
-            switch(part) {
-                case HEAD:
-                    this.as.setHeadPose(ea);
-                    return true;
-                case BODY:
-                    this.as.setBodyPose(ea);
-                    return true;
-                case LEFTARM:
-                    this.as.setLeftArmPose(ea);
-                    return true;
-                case LEFTLEG:
-                    this.as.setLeftLegPose(ea);
-                    return true;
-                case RIGHTARM:
-                    this.as.setRightArmPose(ea);
-                    return true;
-                case RIGHTLEG:
-                    this.as.setRightLegPose(ea);
-                    return true;
-                default:
-                    return false;
-            }
+        Vector v = location.getDirection();
+        EulerAngle ea = new EulerAngle(v.getX(), v.getY(), v.getZ());
+        switch(part) {
+            case HEAD:
+                this.as.setHeadPose(ea);
+                return true;
+            case BODY:
+                this.as.setBodyPose(ea);
+                return true;
+            case LEFTARM:
+                this.as.setLeftArmPose(ea);
+                return true;
+            case LEFTLEG:
+                this.as.setLeftLegPose(ea);
+                return true;
+            case RIGHTARM:
+                this.as.setRightArmPose(ea);
+                return true;
+            case RIGHTLEG:
+                this.as.setRightLegPose(ea);
+                return true;
+            default:
+                return false;
         }
     }
 }
