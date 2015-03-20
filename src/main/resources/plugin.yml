@@ -14,9 +14,9 @@ commands:
               - Set the ArmorStand's name, use & for colorcodes
              /<command> [namevisible|gravity|visible|base|arms|size]
               - Toggle the option
-             /<command> <bodypart> [roll|yaw|pitch] <degree>
+             /<command> <bodypart> [pitch|yaw|roll] <degree>
               - Set an angle, use ~ for relatives
-             /<command> <bodypart> <x> <y> <z>
+             /<command> <bodypart> <pitch> <yaw> <roll>
               - Set all angles of a body part at once, use ~ for relatives
              Bodyparts: head, body, leftarm, rightarm, leftleg, rightleg. 
              (r, y, p, h, ra, ll etc. are possible!)

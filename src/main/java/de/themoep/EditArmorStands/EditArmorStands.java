@@ -234,10 +234,12 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     int x;
                     int y;
                     int z;
-                    boolean relative = false;
+                    boolean rx = false;
+                    boolean ry = false;
+                    boolean rz = false;
 
                     if (args[1].startsWith("~")) {
-                        relative = true;
+                        rx = true;
                         if (args[1].length() == 1)
                             x = 0;
                         else
@@ -246,7 +248,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         x = Integer.parseInt(args[1]);
 
                     if (args[2].startsWith("~")) {
-                        relative = true;
+                        ry = true;
                         if (args[2].length() == 1)
                             y = 0;
                         else
@@ -255,7 +257,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         y = Integer.parseInt(args[2]);
 
                     if (args[3].startsWith("~")) {
-                        relative = true;
+                        rz = true;
                         if (args[3].length() == 1)
                             z = 0;
                         else
@@ -265,7 +267,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
                     try {
                         BodyPart bp = BodyPart.fromString(args[0]);
-                        int[] r = asp.setEulerAngle(bp, x, y, z, relative);
+                        int[] r = asp.setEulerAngle(bp, new int[] {x,y,z}, new boolean[] {rx, ry, rz});
                         player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + ChatColor.YELLOW + r[0] + " " + r[1] + " " + r[2] + ChatColor.GREEN + "!");
                     } catch (IllegalArgumentException e) {
                         player.sendMessage(ChatColor.RED + e.getMessage());

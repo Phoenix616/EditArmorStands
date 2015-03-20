@@ -83,48 +83,60 @@ public class ArmorStandPoser {
         return null;
     }
 
-    public int[] setEulerAngle(BodyPart part, int x, int y, int z, boolean relative) throws IllegalArgumentException{
-        EulerAngle ea;
-        switch(part) {
-            case HEAD:
-                ea = this.as.getHeadPose();
-                ea = getNewEulerAngle(ea, x, y, z, relative);
-                this.as.setHeadPose(ea);
-                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
-            case BODY:
-                ea = this.as.getBodyPose();
-                ea = getNewEulerAngle(ea, x, y, z, relative);
-                this.as.setBodyPose(ea);
-                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
-            case LEFTARM:
-                ea = this.as.getLeftArmPose();
-                ea = getNewEulerAngle(ea, x, y, z, relative);
-                this.as.setLeftArmPose(ea);
-                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
-            case LEFTLEG:
-                ea = this.as.getLeftLegPose();
-                ea = getNewEulerAngle(ea, x, y, z, relative);
-                this.as.setLeftLegPose(ea);
-                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
-            case RIGHTARM:
-                ea = this.as.getRightArmPose();
-                ea = getNewEulerAngle(ea, x, y, z, relative);
-                this.as.setRightArmPose(ea);
-                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
-            case RIGHTLEG:
-                ea = this.as.getRightLegPose();
-                ea = getNewEulerAngle(ea, x, y, z, relative);
-                this.as.setRightLegPose(ea);
-                return (relative) ? new int[] {(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : new int[] {x,y,z};
-            default:
-                throw new IllegalArgumentException("We encountered an error. Please report that immediately to a dev! asp.setEulerAngle(" + part + ", " + x + ", " + y + ", " + z + ", " + relative + ")");
+    public int[] setEulerAngle(BodyPart part, int[] angles, boolean[] relatives) throws IllegalArgumentException{
+        if(angles.length >= 3 && relatives.length >= 3) {
+            boolean relative = relatives[0] && relatives[1] && relatives[2];
+            EulerAngle ea;
+            switch (part) {
+                case HEAD:
+                    ea = this.as.getHeadPose();
+                    ea = getNewEulerAngle(ea, angles, relatives);
+                    this.as.setHeadPose(ea);
+                    return (relative) ? new int[]{(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : angles;
+                case BODY:
+                    ea = this.as.getBodyPose();
+                    ea = getNewEulerAngle(ea, angles, relatives);
+                    this.as.setBodyPose(ea);
+                    return (relative) ? new int[]{(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : angles;
+                case LEFTARM:
+                    ea = this.as.getLeftArmPose();
+                    ea = getNewEulerAngle(ea, angles, relatives);
+                    this.as.setLeftArmPose(ea);
+                    return (relative) ? new int[]{(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : angles;
+                case LEFTLEG:
+                    ea = this.as.getLeftLegPose();
+                    ea = getNewEulerAngle(ea, angles, relatives);
+                    this.as.setLeftLegPose(ea);
+                    return (relative) ? new int[]{(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : angles;
+                case RIGHTARM:
+                    ea = this.as.getRightArmPose();
+                    ea = getNewEulerAngle(ea, angles, relatives);
+                    this.as.setRightArmPose(ea);
+                    return (relative) ? new int[]{(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : angles;
+                case RIGHTLEG:
+                    ea = this.as.getRightLegPose();
+                    ea = getNewEulerAngle(ea, angles, relatives);
+                    this.as.setRightLegPose(ea);
+                    return (relative) ? new int[]{(int) Math.toDegrees(ea.getX()), (int) Math.toDegrees(ea.getY()), (int) Math.toDegrees(ea.getZ())} : angles;
+                default:
+                    throw new IllegalArgumentException("We encountered an error. Please report that immediately to a dev! asp.setEulerAngle(" + part + ", " + angles[0] + ", " + angles[1] + ", " + angles[3] + ", " + relatives + ")");
+            }
+        } else {
+            throw new IllegalArgumentException("Please input 3 angles!");
         }
     }
 
-    private EulerAngle getNewEulerAngle(EulerAngle ea, int x, int y, int z, boolean relative) {
-        if(relative)
-            return ea.add(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z));
-        return new EulerAngle(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z));
+    private EulerAngle getNewEulerAngle(EulerAngle ea, int[] angles, boolean[] relatives) {
+        if(angles.length >= 3 && relatives.length >= 3) {
+            ea = new EulerAngle(
+                            (relatives[0]) ? Math.toRadians(angles[0]) + ea.getX() : ea.getX(),
+                            (relatives[1]) ? Math.toRadians(angles[1]) + ea.getY() : ea.getY(),
+                            (relatives[2]) ? Math.toRadians(angles[2]) + ea.getZ() : ea.getZ()
+                    );
+                    return ea;
+        } else {
+            throw new IllegalArgumentException("Please input 3 angles!");
+        }
     }
 
 
