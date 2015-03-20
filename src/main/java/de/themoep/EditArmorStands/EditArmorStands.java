@@ -32,6 +32,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
     
     HashMap<UUID,String[]> waitingCommands = new HashMap<UUID,String[]>();
 
+    static List<String> options = Arrays.asList(new String[]{"namevisible","gravity","visible","base","arms","size"});
+    
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
     }
@@ -64,7 +66,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     usage.add("&r - Set the Armor Stand's name" + (sender.hasPermission("editarmorstands.command.name.colored") ? ", use & for colorcodes" : ""));
                 }
                 String toggles = "";
-                for(String s : new String[]{"namevisible","gravity","visible","base","arms","size"}) {
+                for(String s : options) {
                     if(sender.hasPermission("editarmorstands.command." + s)) {
                         if(toggles.length() > 0)
                             toggles += "&r|";
@@ -93,7 +95,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         return true;
                     }
                 } catch (IllegalArgumentException e) {
-                    if(getServer().getPluginManager().getPermission("editarmorstands.command." + args[0].toLowerCase()) != null && !sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
+                    if(options.contains(args[0].toLowerCase()) && !sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
                         sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
                     } else {
                         sender.sendMessage(ChatColor.RED + "The argument " + ChatColor.YELLOW + args[0].toLowerCase() + ChatColor.RED + " doesn't exist. Use " + ChatColor.YELLOW + "/eas help" + ChatColor.RED + " to get all available options!");
