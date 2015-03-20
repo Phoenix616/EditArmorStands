@@ -51,36 +51,40 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     sender.sendMessage(ChatColor.RED + "You are currently not editing any Armor Stands!");
                 }
             } else if(args[0].equalsIgnoreCase("usage") || args[0].equalsIgnoreCase("help") ) {
-                sender.sendMessage(ChatColor.GREEN + "EditArmorStands v" + this.getDescription().getVersion() + " Usage:");
+                List<String> usage = new ArrayList<String>();
 
-                sender.sendMessage(ChatColor.YELLOW + "/editarmorstand " + ChatColor.GREEN + "(Alias: " + ChatColor.YELLOW + "/eas" + ChatColor.GREEN + ")");
-                sender.sendMessage(ChatColor.GREEN  + " - Rightclick an Armor Stand in the next 10s to select it");
-                sender.sendMessage(ChatColor.YELLOW + "/eas exit");
-                sender.sendMessage(ChatColor.GREEN  + " - Exit the editing mode");
+                usage.add("--- &6EditArmorStands v" + this.getDescription().getVersion() + " Usage:&r ---");
+                
+                usage.add("&e/editarmorstand %rAlias: &e/eas&r)");
+                usage.add("&r - Rightclick an Armor Stand in the next 10s to select it");
+                usage.add("&e/eas exit");
+                usage.add("&r - Exit the editing mode");
                 if(sender.hasPermission("editarmorstands.command.name")) {
-                    sender.sendMessage(ChatColor.YELLOW + "/eas name <name>");
-                    sender.sendMessage(ChatColor.GREEN + " - Set the ArmorStand's name" + (sender.hasPermission("editarmorstands.command.name.colored") ? ", use & for colorcodes" : ""));
+                    usage.add("&e/eas name <name>");
+                    usage.add("&r - Set the Armor Stand's name" + (sender.hasPermission("editarmorstands.command.name.colored") ? ", use & for colorcodes" : ""));
                 }
                 String toggles = "";
                 for(String s : new String[]{"namevisible","gravity","visible","base","arms","size"}) {
                     if(sender.hasPermission("editarmorstands.command." + s)) {
                         if(toggles.length() > 0)
-                            toggles += "|";
-                        toggles += s;
+                            toggles += "&r|";
+                        toggles += "&e" + s;
                     }
                 }
                 if(toggles.length() > 0) {
-                    sender.sendMessage(ChatColor.YELLOW + "/eas [" + toggles + "]");
-                    sender.sendMessage(ChatColor.GREEN + " - Toggle the option");
+                    usage.add("&e/eas &r[" + toggles + "&e]");
+                    usage.add("&r - Toggle the option");
                 }
                 if(sender.hasPermission("editarmorstands.command.pose")) {
-                    sender.sendMessage(ChatColor.YELLOW + "/eas <bodypart> [pitch|yaw|roll] <degree>");
-                    sender.sendMessage(ChatColor.GREEN + " - Set an angle, use ~ for relatives");
-                    sender.sendMessage(ChatColor.YELLOW + "/eas <bodypart> <pitch> <yaw> <roll>");
-                    sender.sendMessage(ChatColor.GREEN + " - Set all angles of a body part at once, use ~ for relatives");
-                    sender.sendMessage(ChatColor.YELLOW + "Available bodyparts: head, body, leftarm, rightarm, leftleg, rightleg.");
-                    sender.sendMessage(ChatColor.YELLOW + "(Short forms: h, b, la, ra, ll, rl)");
+                    usage.add("&e/eas <bodypart> &r[&epitch&r|&eyaw&r|&eroll&r] <degree>");
+                    usage.add("&r - Set an angle, use ~ for relatives");
+                    usage.add("&e/eas <bodypart> <pitch> <yaw> <roll>");
+                    usage.add("&r - Set all angles of a body part at once, use ~ for relatives");
+                    usage.add("&rAvailable bodyparts: head, body, leftarm, rightarm, leftleg, rightleg. (Short forms: h, b, la, ra, ll, rl)");
                 }
+                
+                for(String s : usage)
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
             } else {
                 try {
                     BodyPart.fromString(args[0]);
