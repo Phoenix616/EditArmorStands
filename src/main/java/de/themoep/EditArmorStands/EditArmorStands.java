@@ -89,6 +89,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             clickTimeout.remove(player.getUniqueId());
             player.sendMessage(ChatColor.GREEN + "Selected ArmorStand at " + ChatColor.YELLOW + as.getLocation().getBlockX() + "/" + as.getLocation().getBlockY() + "/" + as.getLocation().getBlockZ() + ChatColor.GREEN + "!");
             player.getPlayer().sendMessage(ChatColor.GREEN + "You can now use " + ChatColor.YELLOW + "/eas <option> <value> " + ChatColor.GREEN + "to edit the properties of this ArmorStand! To exit the editing mode run " + ChatColor.YELLOW + "/eas exit" + ChatColor.GREEN + "!");
+            return true;
         } else if(args.length > 0 && args[0].equalsIgnoreCase("name")) {
             if(player.hasPermission("editarmorstands.command.name")) {
                 String name = "";
@@ -100,6 +101,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 }
                 as.setCustomName(name.trim() + ChatColor.RESET);
                 player.sendMessage(ChatColor.GREEN + "Set the ArmorStand's name to " + ChatColor.RESET + as.getCustomName() + ChatColor.GREEN + "!");
+                return true;
             } else {
                 player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.name");
             }
@@ -108,6 +110,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 if(player.hasPermission("editarmorstands.command.namevisible")) {
                     as.setCustomNameVisible(!as.isCustomNameVisible());
                     player.sendMessage(ChatColor.GREEN + "The ArmorStand's name is now " + ChatColor.YELLOW + (as.isCustomNameVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
+                    return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.namevisible");
                 }
@@ -115,6 +118,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 if(player.hasPermission("editarmorstands.command.arms")) {
                     as.setArms(!as.hasArms());
                     player.sendMessage(ChatColor.GREEN + "ArmorStand has now " + ChatColor.YELLOW + (as.hasArms() ? "" : "no ") + "arms" + ChatColor.GREEN + "!");
+                    return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.arms");
                 }
@@ -122,6 +126,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 if(player.hasPermission("editarmorstands.command.base")) {
                     as.setBasePlate(!as.hasBasePlate());
                     player.sendMessage(ChatColor.GREEN + "ArmorStand has now " + ChatColor.YELLOW + (as.hasBasePlate() ? "a" : "no") + " baseplate" + ChatColor.GREEN + "!");
+                    return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.base");
                 }
@@ -129,6 +134,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 if(player.hasPermission("editarmorstands.command.gravity")) {
                     as.setGravity(!as.hasGravity());
                     player.sendMessage(ChatColor.GREEN + "ArmorStand has now " + ChatColor.YELLOW + (as.hasGravity() ? "" : "no ") + "gravity" + ChatColor.GREEN + "!");
+                    return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.gravity");
                 }
@@ -136,6 +142,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 if(player.hasPermission("editarmorstands.command.size")) {
                     as.setSmall(!as.isSmall());
                     player.sendMessage(ChatColor.GREEN + "ArmorStand is now " + ChatColor.YELLOW + (as.isSmall() ? "small" : "big") + ChatColor.GREEN + "!");
+                    return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.size");
                 }
@@ -143,6 +150,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 if (player.hasPermission("editarmorstands.command.visible")) {
                     as.setVisible(!as.isVisible());
                     player.sendMessage(ChatColor.GREEN + "ArmorStand is now " + ChatColor.YELLOW + (as.isVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
+                    return true;
                 } else {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.visible");
                 }
@@ -151,13 +159,11 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     ArmorStandPoser asp = new ArmorStandPoser(as);
                     if(asp.translatePlayerLook(args[0], p.getEyeLocation())) {
                         sender.sendMessage(ChatColor.GREEN + "Set " + args[0] + " rotation to your head's view!");
+                        return true;
                     } else {
                         sender.sendMessage(ChatColor.RED + "Sorry but the option " + args[0] + " doesn't exist!");
                     };*/
-            } else {
-                return false;
             }
-
         } else if (args.length == 2) {
             if(player.hasPermission("editarmorstands.command.pose")) {
                 try {
@@ -187,6 +193,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         l.setYaw(angle);
                         as.teleport(l);
                         player.sendMessage(ChatColor.GREEN + "Set ArmorStands rotation to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
+                        return true;
                     } else {
                         player.sendMessage(ChatColor.RED + "Sorry but the option " + args[0] + " doesn't exist!");
                     }
@@ -218,6 +225,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                             Axis a = Axis.fromString(args[1]);
                             int n = asp.setSingleAngle(bp, a, angle, relative);
                             player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s " + a.name().toLowerCase() + " to " + ChatColor.YELLOW + n + ChatColor.GREEN + "!");
+                            return true;
                         } catch (IllegalArgumentException e) {
                             player.sendMessage(ChatColor.RED + e.getMessage());
                         }
@@ -269,6 +277,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         BodyPart bp = BodyPart.fromString(args[0]);
                         int[] r = asp.setEulerAngle(bp, new int[] {x,y,z}, new boolean[] {rx, ry, rz});
                         player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + ChatColor.YELLOW + r[0] + " " + r[1] + " " + r[2] + ChatColor.GREEN + "!");
+                        return true;
                     } catch (IllegalArgumentException e) {
                         player.sendMessage(ChatColor.RED + e.getMessage());
                     }
@@ -280,16 +289,25 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
             }
         } else {
-            return false;
+            player.sendMessage(ChatColor.RED + "Error. You inputted more then 4 arguments!");
         }
-        return true;
+        return false;
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onArmorStandClick(PlayerInteractAtEntityEvent event) {
         if(!event.isCancelled() && event.getRightClicked().getType() == EntityType.ARMOR_STAND) {
-            if(clickTimeout.containsKey(event.getPlayer().getUniqueId()) && waitingCommands.containsKey(event.getPlayer().getUniqueId()) && clickTimeout.get(event.getPlayer().getUniqueId()) + 10 * 1000 > System.currentTimeMillis()) {
-                event.setCancelled(calculateAction(event.getPlayer(), (ArmorStand) event.getRightClicked(), waitingCommands.get(event.getPlayer().getUniqueId())));
+            if(clickTimeout.containsKey(event.getPlayer().getUniqueId()) && waitingCommands.containsKey(event.getPlayer().getUniqueId())) {
+                event.setCancelled(true);
+                if(clickTimeout.get(event.getPlayer().getUniqueId()) + 10 * 1000 > System.currentTimeMillis()) {
+                    if(calculateAction(event.getPlayer(), (ArmorStand) event.getRightClicked(), waitingCommands.get(event.getPlayer().getUniqueId()))) {
+                        clickTimeout.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+                    }
+                } else {
+                    clickTimeout.remove(event.getPlayer().getUniqueId());
+                    waitingCommands.remove(event.getPlayer().getUniqueId());
+                    event.getPlayer().sendMessage(ChatColor.RED + "Your click action expired!");
+                }
             } else if (event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
                 ItemStack hi = event.getPlayer().getItemInHand();
                 if(hi.hasItemMeta() && hi.getItemMeta().hasDisplayName()) {
