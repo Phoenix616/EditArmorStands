@@ -55,7 +55,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
                 usage.add("--- &6EditArmorStands v" + this.getDescription().getVersion() + " Usage:&r ---");
                 
-                usage.add("&e/editarmorstand %rAlias: &e/eas&r)");
+                usage.add("&e/editarmorstand &rAlias: &e/eas&r)");
                 usage.add("&r - Rightclick an Armor Stand in the next 10s to select it");
                 usage.add("&e/eas exit");
                 usage.add("&r - Exit the editing mode");
@@ -72,7 +72,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     }
                 }
                 if(toggles.length() > 0) {
-                    usage.add("&e/eas &r[" + toggles + "&e]");
+                    usage.add("&e/eas &r[" + toggles + "&r]");
                     usage.add("&r - Toggle the option");
                 }
                 if(sender.hasPermission("editarmorstands.command.pose")) {
@@ -80,7 +80,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     usage.add("&r - Set an angle, use ~ for relatives");
                     usage.add("&e/eas <bodypart> <pitch> <yaw> <roll>");
                     usage.add("&r - Set all angles of a body part at once, use ~ for relatives");
-                    usage.add("&rAvailable bodyparts: head, body, leftarm, rightarm, leftleg, rightleg. (Short forms: h, b, la, ra, ll, rl)");
+                    usage.add("&eAvailable bodyparts: head, body, leftarm, rightarm, leftleg, rightleg. (Short forms: h, b, la, ra, ll, rl)");
                 }
                 
                 for(String s : usage)
