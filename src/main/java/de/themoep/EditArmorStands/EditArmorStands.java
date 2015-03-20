@@ -66,7 +66,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                                 break;
                             }
                         if (as != null) {
-                            return calculateAction(p, as, args);
+                            calculateAction(p, as, args);
                         } else {
                             sender.sendMessage(ChatColor.RED + "You can only edit ArmorStands in a 64 block radius!");
                         }
