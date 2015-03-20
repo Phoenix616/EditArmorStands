@@ -93,7 +93,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         return true;
                     }
                 } catch (IllegalArgumentException e) {
-                    if(this.getDescription().getPermissions().contains("editarmorstands.command." + args[0].toLowerCase()) && !sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
+                    if(getServer().getPluginManager().getPermission("editarmorstands.command." + args[0].toLowerCase()) != null && !sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
                         sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
                     } else {
                         sender.sendMessage(ChatColor.RED + "The argument " + ChatColor.YELLOW + args[0].toLowerCase() + ChatColor.RED + " doesn't exist. Use " + ChatColor.YELLOW + "/eas help" + ChatColor.RED + " to get all available options!");
