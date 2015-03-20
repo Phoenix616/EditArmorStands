@@ -1,5 +1,7 @@
 package de.themoep.EditArmorStands;
 
+import java.util.Arrays;
+
 /**
  * Created by Phoenix616 on 19.03.2015.
  */
@@ -25,6 +27,6 @@ public enum Axis {
                     if(a.equalsIgnoreCase(name))
                         return x;
         }
-        throw new IllegalArgumentException("No enum const Axis." + name.toUpperCase());
+        throw new IllegalArgumentException(name + " is not an axis! Available axis are " + Arrays.toString(Axis.values()).toLowerCase());
     }
 }

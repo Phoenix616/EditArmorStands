@@ -1,5 +1,7 @@
 package de.themoep.EditArmorStands;
 
+import java.util.Arrays;
+
 /**
  * Created by Phoenix616 on 19.03.2015.
  */
@@ -29,6 +31,6 @@ public enum BodyPart {
                     if(a.equalsIgnoreCase(name))
                         return p;
         }
-        throw new IllegalArgumentException("No enum const BodyPart." + name.toUpperCase());
+        throw new IllegalArgumentException(name + " is not a body part! Available parts are " + Arrays.toString(BodyPart.values()).toLowerCase());
     }
 }
