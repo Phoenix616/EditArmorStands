@@ -32,7 +32,6 @@ permissions:
       children:
          editarmorstands.command: true
          editarmorstands.command.gravity: true
-         editarmorstands.command.visible: true
          editarmorstands.command.base: true
          editarmorstands.command.arms: true
          editarmorstands.command.size: true
