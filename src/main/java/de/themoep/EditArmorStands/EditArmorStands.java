@@ -43,7 +43,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             Player p = (Player) sender;
 
             if(args.length == 0) {
-                sender.sendMessage(ChatColor.GREEN + "Rightclick on the ArmorStand you want to edit in the next 10s!");
+                sender.sendMessage(ChatColor.GREEN + "Rightclick on the ArmorStand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
                 clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
                 waitingCommands.put(p.getUniqueId(), args);
             } else {
@@ -71,8 +71,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                             sender.sendMessage(ChatColor.RED + "You can only edit ArmorStands in a 64 block radius!");
                         }
                     } else {
-                        sender.sendMessage(ChatColor.RED + "Rightclick on the ArmorStand you want to edit in the next 10s!");
-                        clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
+                        sender.sendMessage(ChatColor.GREEN + "Rightclick on the ArmorStand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
+                                clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
                         waitingCommands.put(p.getUniqueId(), args);
                     }
                 }
