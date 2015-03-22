@@ -81,6 +81,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     usage.add("&r - Toggle the option");
                 }
                 if(sender.hasPermission("editarmorstands.command.pose")) {
+                    usage.add("&e/eas rotate <degree>");
+                    usage.add("&r - Rotate the whole armor stand");
                     usage.add("&e/eas <bodypart> &r[&epitch&r|&eyaw&r|&eroll&r] <degree>");
                     usage.add("&r - Set an angle, use ~ for relatives");
                     usage.add("&e/eas <bodypart> <pitch> <yaw> <roll>");
@@ -98,7 +100,12 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         return true;
                     }
                 } catch (IllegalArgumentException e) {
-                    if(args[0].equalsIgnoreCase("name") || toggleOptions.contains(args[0].toLowerCase())) {
+                    if(args[0].equalsIgnoreCase("y") || args[0].equalsIgnoreCase("yaw") || args[0].equalsIgnoreCase("r") || args[0].equalsIgnoreCase("rotate") || args[0].equalsIgnoreCase("rotation")) {
+                        if(!sender.hasPermission("editarmorstands.command.pose")) {
+                            sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
+                            return true;
+                        }
+                    } else if(args[0].equalsIgnoreCase("name") || toggleOptions.contains(args[0].toLowerCase())) {
                         if(!sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
                             sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
                             return true;
