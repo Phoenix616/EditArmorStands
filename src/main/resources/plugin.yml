@@ -1,6 +1,6 @@
 name: EditArmorStands
 main: de.themoep.EditArmorStands.EditArmorStands
-version: 1.2.0
+version: 1.3.0
 commands:
    editarmorstand:      
       aliases: [editas, eas]
@@ -10,6 +10,8 @@ commands:
               - Rightclick an ArmorStand in the next 10s to select it
              /<command> exit
               - Exit the editing mode
+             /<command> items
+              - Show a gui to manipulte the items/armor
              /<command> name <name>
               - Set the ArmorStand's name, use & for colorcodes
              /<command> move <x> <y> <z>
@@ -33,6 +35,7 @@ permissions:
       description: A collection of permissions a normal user should have.
       children:
          editarmorstands.command: true
+         editarmorstands.command.items: true
          editarmorstands.command.gravity: true
          editarmorstands.command.base: true
          editarmorstands.command.arms: true
@@ -45,6 +48,7 @@ permissions:
       description: Gives access to all EditArmorStands commands
       children:
          editarmorstands.command: true
+         editarmorstands.command.items: true
          editarmorstands.command.name: true
          editarmorstands.command.name.colored: true
          editarmorstands.command.namevisible: true
@@ -64,6 +68,9 @@ permissions:
          editarmorstands.nametag.name: true
          editarmorstands.nametag.name.colored: true
          editarmorstands.nametag.name.clear: true
+   editarmorstands.command.items:
+      description: Allows a player to show a gui to modify the armostand's inventory
+      default: op
    editarmorstands.command.name:
       description: Allows a player to set the name of an armorstand
       default: op

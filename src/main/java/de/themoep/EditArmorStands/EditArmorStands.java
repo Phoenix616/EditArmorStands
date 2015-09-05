@@ -85,6 +85,10 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 usage.add("&r - Rightclick an Armor Stand in the next 10s to select it");
                 usage.add("&e/eas exit");
                 usage.add("&r - Exit the editing mode");
+                if(sender.hasPermission("editarmorstands.command.items")) {
+                    usage.add("&e/eas items");
+                    usage.add("&r - Show a gui to manipulte the items/armor");
+                }
                 if(sender.hasPermission("editarmorstands.command.name")) {
                     usage.add("&e/eas name <name>");
                     usage.add("&r - Set the Armor Stand's name" + (sender.hasPermission("editarmorstands.command.name.colored") ? ", use & for colorcodes" : ""));
@@ -130,7 +134,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                             sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
                             return true;
                         }
-                    } else if(args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("move") || toggleOptions.contains(args[0].toLowerCase())) {
+                    } else if(args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("move") || args[0].equalsIgnoreCase("items") || toggleOptions.contains(args[0].toLowerCase())) {
                         if(!sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
                             sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
                             return true;
@@ -188,7 +192,15 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.name");
             }
         } else if(args.length == 1) {
-            if(args[0].equalsIgnoreCase("namevisible")) {
+            if(args[0].equalsIgnoreCase("items")) {
+                if(player.hasPermission("editarmorstands.command.items")) {
+                    ArmorStandGui gui = new ArmorStandGui(this, as, player);
+                    gui.show();
+                    return true;
+                } else {
+                    player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.items");
+                }
+            } else if(args[0].equalsIgnoreCase("namevisible")) {
                 if(player.hasPermission("editarmorstands.command.namevisible")) {
                     as.setCustomNameVisible(!as.isCustomNameVisible());
                     player.sendMessage(ChatColor.GREEN + "The Armor Stand's name is now " + ChatColor.YELLOW + (as.isCustomNameVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
