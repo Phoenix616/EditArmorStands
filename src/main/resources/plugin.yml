@@ -31,6 +31,7 @@ permissions:
       children:
          editarmorstands.command.*: true
          editarmorstands.nametag.*: true
+         editarmorstands.openinventory: true
    editarmorstands.user:
       description: A collection of permissions a normal user should have.
       children:
@@ -44,6 +45,7 @@ permissions:
          editarmorstands.command.move: true
          editarmorstands.nametag.name: true
          editarmorstands.nametag.name.clear: true
+         editarmorstands.openinventory: true
    editarmorstands.command.*:
       description: Gives access to all EditArmorStands commands
       children:
@@ -118,4 +120,7 @@ permissions:
       default: op
    editarmorstands.nametag.name.clear:
       description: Allows a player to clear the name of an armorstand with an empty nametag
+      default: op
+   editarmorstands.openinventory:
+      description: Allows a player to open the inventory via rightclicking on an armor stand
       default: op

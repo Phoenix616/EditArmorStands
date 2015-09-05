@@ -439,11 +439,12 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onArmorStandClick(PlayerInteractAtEntityEvent event) {
-        if(!event.isCancelled() && event.getRightClicked().getType() == EntityType.ARMOR_STAND) {
+        if(!event.isCancelled() && event.getRightClicked() instanceof ArmorStand) {
+            ArmorStand armorStand = (ArmorStand) event.getRightClicked();
             if(clickTimeout.containsKey(event.getPlayer().getUniqueId()) && waitingCommands.containsKey(event.getPlayer().getUniqueId())) {
                 event.setCancelled(true);
                 if(clickTimeout.get(event.getPlayer().getUniqueId()) + 10 * 1000 > System.currentTimeMillis()) {
-                    if(calculateAction(event.getPlayer(), (ArmorStand) event.getRightClicked(), waitingCommands.get(event.getPlayer().getUniqueId()))) {
+                    if(calculateAction(event.getPlayer(), armorStand, waitingCommands.get(event.getPlayer().getUniqueId()))) {
                         clickTimeout.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
                     }
                 } else {
@@ -451,7 +452,9 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     waitingCommands.remove(event.getPlayer().getUniqueId());
                     event.getPlayer().sendMessage(ChatColor.RED + "Your click action expired!");
                 }
-            } else if(event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
+                return;
+            }
+            if(event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
                 ItemStack hi = event.getPlayer().getItemInHand();
                 if(hi.hasItemMeta() && hi.getItemMeta().hasDisplayName()) {
                     if(event.getPlayer().hasPermission("editarmorstands.nametag.name")) {
@@ -460,8 +463,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         if(event.getPlayer().hasPermission("editarmorstands.nametag.name.colored")) {
                             name = ChatColor.translateAlternateColorCodes('&', name);
                         }
-                        event.getRightClicked().setCustomName(name + ChatColor.RESET);
-                        event.getRightClicked().setCustomNameVisible(true);
+                        armorStand.setCustomName(name + ChatColor.RESET);
+                        armorStand.setCustomNameVisible(true);
                         if(event.getPlayer().getGameMode() != GameMode.CREATIVE) {
                             if(hi.getAmount() > 1) {
                                 hi.setAmount(hi.getAmount() - 1);
@@ -470,12 +473,19 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                             }
                             event.getPlayer().updateInventory();
                         }
+                        return;
                     }
                 } else if(event.getPlayer().hasPermission("editarmorstands.nametag.name.clear")) {
                     event.setCancelled(true);
-                    event.getRightClicked().setCustomName("");
-                    event.getRightClicked().setCustomNameVisible(false);
+                    armorStand.setCustomName("");
+                    armorStand.setCustomNameVisible(false);
+                    return;
                 }
+            }
+            if(spigot && !event.getPlayer().isSneaking() && event.getPlayer().hasPermission("editarmrostands.openinventory")) {
+                event.setCancelled(true);
+                ArmorStandGui gui = new ArmorStandGui(this, armorStand, event.getPlayer());
+                gui.show();
             }
         }
     }
