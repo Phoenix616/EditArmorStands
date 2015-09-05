@@ -137,7 +137,7 @@ public class ArmorStandGui implements Listener {
                 }
                 ItemStack cur = event.getCurrentItem();
                 ItemStack realItem = getSlotItem(event.getSlot());
-                if(cur != null && cur.getType() != Material.AIR && !cur.equals(realItem)) {
+                if(!areSimilar(cur, realItem)) {
                     event.setCancelled(true);
                     plugin.getLogger().log(Level.WARNING, "The item " + event.getWhoClicked().getName() + " tried to pickup was not the same as the one in the inventory (Armor Stand or player)! Duping attempt?");
                     event.setCurrentItem(realItem);
@@ -193,6 +193,16 @@ public class ArmorStandGui implements Listener {
                 }
             }
         }
+    }
+
+    private boolean areSimilar(ItemStack item1, ItemStack item2) {
+        if((item1 == null || item1.getType() == Material.AIR) && (item2 == null || item2.getType() == Material.AIR)) {
+            return true;
+        }
+        if(item1 != null && item2 != null) {
+            return item1.equals(item2);
+        }
+        return false;
     }
 
     private boolean setSlot(int slot, ItemStack item) {
