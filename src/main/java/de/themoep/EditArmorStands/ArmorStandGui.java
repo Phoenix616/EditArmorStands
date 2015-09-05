@@ -7,10 +7,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
@@ -18,6 +20,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -76,11 +79,15 @@ public class ArmorStandGui implements Listener {
             Material.DIAMOND_BOOTS,
             Material.CHAINMAIL_BOOTS
     );
+
+    private final static List<Integer> SLOTS_ARMORS = Arrays.asList(13, 22, 31, 40);
+    private final static List<Integer> SLOTS_PLAYER = Arrays.asList(16, 25, 34, 43);
+
     private final ItemStack filler;
 
     private boolean open = false;
 
-    private Inventory inventory;
+    private Inventory inventory = null;
 
     private InventoryView gui;
 
@@ -99,7 +106,9 @@ public class ArmorStandGui implements Listener {
     }
 
     private void build() {
-        inventory = plugin.getServer().createInventory(null, 6 * 9, "Armor Stand items:");
+        if(inventory == null) {
+            inventory = plugin.getServer().createInventory(null, 6 * 9, "Armor Stand items:");
+        }
         ItemStack[] items = new ItemStack[6 * 9];
         for(int i = 0; i < inventory.getSize(); i++) {
             items[i] = getSlotItem(i);
@@ -114,59 +123,107 @@ public class ArmorStandGui implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if(open && !event.isCancelled() && event.getClickedInventory() == event.getWhoClicked().getOpenInventory().getTopInventory() && event.getView() == gui) {
-            ItemStack cur = event.getCurrentItem();
-            ItemStack realItem = getSlotItem(event.getSlot());
-            if(cur != null && cur.getType() != Material.AIR && !cur.equals(realItem)) {
-                plugin.getLogger().log(Level.WARNING, "The item " + event.getWhoClicked().getName() + " tried to pickup was not the same as the one on the armor stand! Duping attempt?");
-                event.setCancelled(true);
-                event.setCurrentItem(realItem);
-                event.getWhoClicked().sendMessage(ChatColor.RED + "This Armor Stands items where modified! Please try again!");
-                return;
-            }
-            ItemStack hand = event.getCursor();
-            plugin.getLogger().info("event.getAction() == " + event.getAction());
-            try {
-                ItemStack result = getResultItem(event.getAction(), cur, hand);
-                if(isValidItem(event.getSlot(), result)) {
-                    switch(event.getSlot()) {
-                        case 13:
-                            armorStand.setHelmet(result);
-                            break;
-                        case 21:
-                            armorStand.setItemInHand(result);
-                            break;
-                        case 22:
-                            armorStand.setChestplate(result);
-                            break;
-                        /*case 23:
-                            break;*/
-                        case 31:
-                            armorStand.setLeggings(result);
-                            break;
-                        case 40:
-                            armorStand.setBoots(result);
-                            break;
-                        case 16:
-                            player.getInventory().setHelmet(result);
-                            break;
-                        case 25:
-                            player.getInventory().setChestplate(result);
-                            break;
-                        case 34:
-                            player.getInventory().setLeggings(result);
-                            break;
-                        case 43:
-                            player.getInventory().setBoots(result);
-                            break;
-                    }
-                } else {
+        if(open && !event.isCancelled()) {
+            plugin.getLogger().info(event.getWhoClicked().getName() + " Action: " + event.getAction());
+            if(event.getClickedInventory() == event.getWhoClicked().getOpenInventory().getTopInventory() && event.getView() == gui) {
+                ItemStack cur = event.getCurrentItem();
+                ItemStack realItem = getSlotItem(event.getSlot());
+                if(cur != null && cur.getType() != Material.AIR && !cur.equals(realItem)) {
+                    plugin.getLogger().log(Level.WARNING, "The item " + event.getWhoClicked().getName() + " tried to pickup was not the same as the one in the inventory (Armor Stand or player)! Duping attempt?");
                     event.setCancelled(true);
+                    event.setCurrentItem(realItem);
+                    event.getWhoClicked().sendMessage(ChatColor.RED + "This inventory's items where modified! Please try again!");
+                    return;
                 }
-            } catch(ActionNotSupported e) {
-                event.setCancelled(true);
+                ItemStack hand = event.getCursor();
+                try {
+                    ItemStack result = getResultItem(event.getSlot(), event.getAction(), cur, hand);
+                    if(!setSlot(event.getSlot(), result)) {
+                        event.setCancelled(true);
+                    } else if(event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && (SLOTS_PLAYER.contains(event.getSlot()) || SLOTS_ARMORS.contains(event.getSlot()))) {
+                        build();
+                        event.setCancelled(true);
+                    }
+
+                } catch(ActionNotSupported e) {
+                    if(event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
+                        event.setCancelled(true);
+                        ItemStack hbItem = event.getWhoClicked().getInventory().getItem(event.getHotbarButton());
+                        if(setSlot(event.getSlot(), hbItem)) {
+                            build();
+                            event.getWhoClicked().getInventory().setItem(event.getHotbarButton(), cur);
+                        } else {
+                            int emptySlot = event.getWhoClicked().getInventory().firstEmpty();
+                            if(emptySlot > 0 && setSlot(event.getSlot(), null)) {
+                                build();
+                                event.getWhoClicked().getInventory().setItem(event.getHotbarButton(), cur);
+                                event.getWhoClicked().getInventory().setItem(emptySlot, hbItem);
+                            }
+                        }
+                    } else {
+                        event.setCancelled(true);
+                    }
+                }
+            } else if(event.getClickedInventory() == event.getWhoClicked().getOpenInventory().getBottomInventory()) {
+                if(event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+                    event.setCancelled(true);
+                    List<Integer> slots = new ArrayList<Integer>(SLOTS_ARMORS);
+                    slots.addAll(SLOTS_PLAYER);
+                    slots.add(21);
+                    //slots.add(23);
+                    for(int i : slots) {
+                        ItemStack target = event.getWhoClicked().getOpenInventory().getTopInventory().getItem(i);
+                        if((target == null || target.getType() == Material.AIR) && isValidItem(i, event.getCurrentItem())) {
+                            if(setSlot(i, event.getCurrentItem())) {
+                                event.getWhoClicked().getInventory().setItem(event.getSlot(), null);
+                                build();
+                            }
+                            break;
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private boolean setSlot(int slot, ItemStack item) {
+        if(isValidItem(slot, item)) {
+            switch(slot) {
+                case 13:
+                    armorStand.setHelmet(item);
+                    break;
+                case 21:
+                    armorStand.setItemInHand(item);
+                    break;
+                case 22:
+                    armorStand.setChestplate(item);
+                    break;
+                /*case 23:
+                    break;*/
+                case 31:
+                    armorStand.setLeggings(item);
+                    break;
+                case 40:
+                    armorStand.setBoots(item);
+                    break;
+                case 16:
+                    player.getInventory().setHelmet(item);
+                    break;
+                case 25:
+                    player.getInventory().setChestplate(item);
+                    break;
+                case 34:
+                    player.getInventory().setLeggings(item);
+                    break;
+                case 43:
+                    player.getInventory().setBoots(item);
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     private ItemStack getSlotItem(int slot) {
@@ -201,12 +258,13 @@ public class ArmorStandGui implements Listener {
         }
     }
 
-    private ItemStack getResultItem(InventoryAction action, ItemStack current, ItemStack hand) throws ActionNotSupported {
+    private ItemStack getResultItem(int slot, InventoryAction action, ItemStack current, ItemStack hand) throws ActionNotSupported {
         ItemStack curClone = current == null ? null : current.clone();
         ItemStack handClone = hand == null ? null : hand.clone();
         switch(action) {
             case DROP_ALL_SLOT:
             case PICKUP_ALL:
+            case HOTBAR_SWAP:
                 return null;
             case SWAP_WITH_CURSOR:
                 return handClone;
@@ -241,9 +299,34 @@ public class ArmorStandGui implements Listener {
                     curClone.setAmount(amount > 0 ? amount : 0);
                 }
                 return curClone;
+            case MOVE_TO_OTHER_INVENTORY:
+                if(SLOTS_PLAYER.contains(slot) || SLOTS_ARMORS.contains(slot)) {
+                    return swap(slot);
+                }
+                return null;
             default:
                 throw new ActionNotSupported();
         }
+    }
+
+    private ItemStack swap(int slot) {
+        int swap = getSwap(slot);
+        ItemStack slotItem = getSlotItem(slot);
+        ItemStack item = getSlotItem(swap);
+        if(!setSlot(swap, slotItem)) {
+            return null;
+        }
+        return item;
+    }
+
+    private int getSwap(int slot) {
+        int swap = -1;
+        if(SLOTS_ARMORS.contains(slot)) {
+            swap = SLOTS_PLAYER.get(SLOTS_ARMORS.indexOf(slot));
+        } else if(SLOTS_PLAYER.contains(slot)) {
+            swap = SLOTS_ARMORS.get(SLOTS_PLAYER.indexOf(slot));
+        }
+        return swap;
     }
 
     private boolean isValidItem(int slot, ItemStack itemStack) {
@@ -270,8 +353,15 @@ public class ArmorStandGui implements Listener {
     }
 
     @EventHandler
+    public void onArmorStandInteract(PlayerArmorStandManipulateEvent event) {
+        if(!event.isCancelled() && event.getRightClicked().getUniqueId() == armorStand.getUniqueId()) {
+            event.setCancelled(true);
+            event.getPlayer().sendMessage(ChatColor.RED + "Can't manipulate this Armor Stand! " + ChatColor.GOLD + player.getName() + ChatColor.RED + " is currently editing it!");
+        }
+    }
+
+    @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        plugin.getLogger().info("InventoryCloseEvent: " + event.getPlayer().getName());
         if(event.getPlayer().getUniqueId() == player.getUniqueId() && event.getView() == gui) {
             destroy();
         }
@@ -285,16 +375,25 @@ public class ArmorStandGui implements Listener {
     }
 
     @EventHandler
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if(event.getPlayer().getUniqueId() == player.getUniqueId()) {
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if(event.getEntity().getUniqueId() == player.getUniqueId()) {
             destroy();
         }
     }
 
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        if(event.getEntity().getUniqueId() == player.getUniqueId()) {
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        if(event.getPlayer().getUniqueId() == player.getUniqueId()) {
             destroy();
+            player.closeInventory();
+        }
+    }
+
+    @EventHandler
+    public void onArmorStandDestroy(EntityDeathEvent event) {
+        if(event.getEntity().getUniqueId() == armorStand.getUniqueId() && open) {
+            destroy();
+            player.closeInventory();
         }
     }
 
