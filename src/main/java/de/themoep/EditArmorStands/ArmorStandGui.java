@@ -12,7 +12,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
@@ -80,8 +80,8 @@ public class ArmorStandGui implements Listener {
             Material.CHAINMAIL_BOOTS
     );
 
-    private final static List<Integer> SLOTS_ARMORS = Arrays.asList(13, 22, 31, 40);
-    private final static List<Integer> SLOTS_PLAYER = Arrays.asList(16, 25, 34, 43);
+    private final static List<Integer> SLOTS_ARMORS = Arrays.asList(4, 12, 22, 31);
+    private final static List<Integer> SLOTS_PLAYER = Arrays.asList(7, 16, 25, 34);
 
     private final ItemStack filler;
 
@@ -107,9 +107,9 @@ public class ArmorStandGui implements Listener {
 
     private void build() {
         if(inventory == null) {
-            inventory = plugin.getServer().createInventory(null, 6 * 9, "Armor Stand items:");
+            inventory = plugin.getServer().createInventory(null, 4 * 9, "Armor Stand items:");
         }
-        ItemStack[] items = new ItemStack[6 * 9];
+        ItemStack[] items = new ItemStack[4 * 9];
         for(int i = 0; i < inventory.getSize(); i++) {
             items[i] = getSlotItem(i);
         }
@@ -123,16 +123,25 @@ public class ArmorStandGui implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if(open && !event.isCancelled()) {
+        if(open && !event.isCancelled() && event.getWhoClicked().getUniqueId() == player.getUniqueId()) {
             plugin.getLogger().info(event.getWhoClicked().getName() + " Action: " + event.getAction());
             if(event.getClickedInventory() == event.getWhoClicked().getOpenInventory().getTopInventory() && event.getView() == gui) {
+                if(event.getSlot() == 8) {
+                    event.setCancelled(true);
+                    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                        public void run() {
+                            player.closeInventory();
+                        }
+                    });
+                    return;
+                }
                 ItemStack cur = event.getCurrentItem();
                 ItemStack realItem = getSlotItem(event.getSlot());
                 if(cur != null && cur.getType() != Material.AIR && !cur.equals(realItem)) {
-                    plugin.getLogger().log(Level.WARNING, "The item " + event.getWhoClicked().getName() + " tried to pickup was not the same as the one in the inventory (Armor Stand or player)! Duping attempt?");
                     event.setCancelled(true);
+                    plugin.getLogger().log(Level.WARNING, "The item " + event.getWhoClicked().getName() + " tried to pickup was not the same as the one in the inventory (Armor Stand or player)! Duping attempt?");
                     event.setCurrentItem(realItem);
-                    event.getWhoClicked().sendMessage(ChatColor.RED + "This inventory's items where modified! Please try again!");
+                    event.getWhoClicked().sendMessage(ChatColor.RED + "This inventory's items were modified! Please try again!");
                     return;
                 }
                 ItemStack hand = event.getCursor();
@@ -169,8 +178,8 @@ public class ArmorStandGui implements Listener {
                     event.setCancelled(true);
                     List<Integer> slots = new ArrayList<Integer>(SLOTS_ARMORS);
                     slots.addAll(SLOTS_PLAYER);
-                    slots.add(21);
-                    //slots.add(23);
+                    slots.add(12);
+                    //slots.add(14);
                     for(int i : slots) {
                         ItemStack target = event.getWhoClicked().getOpenInventory().getTopInventory().getItem(i);
                         if((target == null || target.getType() == Material.AIR) && isValidItem(i, event.getCurrentItem())) {
@@ -189,33 +198,33 @@ public class ArmorStandGui implements Listener {
     private boolean setSlot(int slot, ItemStack item) {
         if(isValidItem(slot, item)) {
             switch(slot) {
-                case 13:
+                case 4:
                     armorStand.setHelmet(item);
                     break;
-                case 21:
+                case 12:
                     armorStand.setItemInHand(item);
                     break;
-                case 22:
+                case 13:
                     armorStand.setChestplate(item);
                     break;
-                /*case 23:
+                /*case 14:
                     break;*/
-                case 31:
+                case 22:
                     armorStand.setLeggings(item);
                     break;
-                case 40:
+                case 31:
                     armorStand.setBoots(item);
                     break;
-                case 16:
+                case 7:
                     player.getInventory().setHelmet(item);
                     break;
-                case 25:
+                case 16:
                     player.getInventory().setChestplate(item);
                     break;
-                case 34:
+                case 25:
                     player.getInventory().setLeggings(item);
                     break;
-                case 43:
+                case 34:
                     player.getInventory().setBoots(item);
                     break;
                 default:
@@ -228,31 +237,37 @@ public class ArmorStandGui implements Listener {
 
     private ItemStack getSlotItem(int slot) {
         switch(slot) {
-            case 13:
+            case 4:
                 return armorStand.getHelmet();
-            case 21:
+            case 12:
                 return armorStand.getItemInHand();
-            case 22:
+            case 13:
                 return armorStand.getChestplate();
-            case 23:
+            case 14:
                 ItemStack leftArm = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
                 ItemMeta laim = leftArm.getItemMeta();
                 laim.setDisplayName(ChatColor.RED + "Can't set the left arm until 1.9!");
                 leftArm.setItemMeta(laim);
                 return leftArm;
                 //return armorStand.getItemInLeftHand();
-            case 31:
+            case 22:
                 return armorStand.getLeggings();
-            case 40:
+            case 31:
                 return armorStand.getBoots();
-            case 16:
+            case 7:
                 return player.getInventory().getHelmet();
-            case 25:
+            case 16:
                 return player.getInventory().getChestplate();
-            case 34:
+            case 25:
                 return player.getInventory().getLeggings();
-            case 43:
+            case 34:
                 return player.getInventory().getBoots();
+            case 8:
+                ItemStack close = new ItemStack(Material.BARRIER);
+                ItemMeta cim = close.getItemMeta();
+                cim.setDisplayName(ChatColor.RED + "Close");
+                close.setItemMeta(cim);
+                return close;
             default:
                 return filler;
         }
@@ -313,10 +328,10 @@ public class ArmorStandGui implements Listener {
         int swap = getSwap(slot);
         ItemStack slotItem = getSlotItem(slot);
         ItemStack item = getSlotItem(swap);
-        if(!setSlot(swap, slotItem)) {
-            return null;
+        if(setSlot(swap, slotItem)) {
+            return item;
         }
-        return item;
+        return null;
     }
 
     private int getSwap(int slot) {
@@ -332,20 +347,20 @@ public class ArmorStandGui implements Listener {
     private boolean isValidItem(int slot, ItemStack itemStack) {
         boolean empty = itemStack == null || itemStack.getType() == Material.AIR;
         switch(slot) {
+            case 4:
+            case 7:
+                return empty || HELMETS.contains(itemStack.getType());
+            case 12:
+            //case 14:
+                return true;
             case 13:
             case 16:
-                return empty || HELMETS.contains(itemStack.getType());
-            case 21:
-            //case 23:
-                return true;
+                return empty || CHESTPLATES.contains(itemStack.getType());
             case 22:
             case 25:
-                return empty || CHESTPLATES.contains(itemStack.getType());
+                return empty || PANTS.contains(itemStack.getType());
             case 31:
             case 34:
-                return empty || PANTS.contains(itemStack.getType());
-            case 40:
-            case 43:
                 return empty || BOOTS.contains(itemStack.getType());
             default:
                 return false;
@@ -353,8 +368,8 @@ public class ArmorStandGui implements Listener {
     }
 
     @EventHandler
-    public void onArmorStandInteract(PlayerArmorStandManipulateEvent event) {
-        if(!event.isCancelled() && event.getRightClicked().getUniqueId() == armorStand.getUniqueId()) {
+    public void onArmorStandInteract(PlayerInteractEntityEvent event) {
+        if(event.getRightClicked().getUniqueId() == armorStand.getUniqueId()) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(ChatColor.RED + "Can't manipulate this Armor Stand! " + ChatColor.GOLD + player.getName() + ChatColor.RED + " is currently editing it!");
         }
