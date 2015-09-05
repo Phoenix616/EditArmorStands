@@ -1,5 +1,6 @@
 package de.themoep.EditArmorStands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -51,11 +52,21 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
     HashMap<UUID, String[]> waitingCommands = new HashMap<UUID, String[]>();
 
-    static List<String> toggleOptions = Arrays.asList(new String[]{"namevisible", "gravity", "visible", "base", "arms", "size"});
+    static List<String> toggleOptions = Arrays.asList("namevisible", "gravity", "visible", "base", "arms", "size");
 
     static DecimalFormat df = new DecimalFormat("#.##");
 
+    private boolean spigot;
+
     public void onEnable() {
+        try {
+            Bukkit.class.getMethod("spigot");
+            spigot = true;
+            this.getLogger().info("Detected Spigot server. Items GUI enabled!");
+        } catch (NoSuchMethodException e) {
+            spigot = false;
+            this.getLogger().info("Detected a non-Spigot server. Items GUI will not work!");
+        }
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -85,7 +96,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 usage.add("&r - Rightclick an Armor Stand in the next 10s to select it");
                 usage.add("&e/eas exit");
                 usage.add("&r - Exit the editing mode");
-                if(sender.hasPermission("editarmorstands.command.items")) {
+                if(spigot && sender.hasPermission("editarmorstands.command.items")) {
                     usage.add("&e/eas items");
                     usage.add("&r - Show a gui to manipulte the items/armor");
                 }
@@ -193,12 +204,16 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             }
         } else if(args.length == 1) {
             if(args[0].equalsIgnoreCase("items")) {
-                if(player.hasPermission("editarmorstands.command.items")) {
-                    ArmorStandGui gui = new ArmorStandGui(this, as, player);
-                    gui.show();
-                    return true;
+                if(spigot) {
+                    if(player.hasPermission("editarmorstands.command.items")) {
+                        ArmorStandGui gui = new ArmorStandGui(this, as, player);
+                        gui.show();
+                        return true;
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.items");
+                    }
                 } else {
-                    player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.items");
+                    player.sendMessage(ChatColor.RED + "This functionality is only available on Spigot servers as Bukkit is missing some methods!");
                 }
             } else if(args[0].equalsIgnoreCase("namevisible")) {
                 if(player.hasPermission("editarmorstands.command.namevisible")) {
