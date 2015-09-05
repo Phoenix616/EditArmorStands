@@ -80,7 +80,7 @@ public class ArmorStandGui implements Listener {
             Material.CHAINMAIL_BOOTS
     );
 
-    private final static List<Integer> SLOTS_ARMORS = Arrays.asList(4, 12, 22, 31);
+    private final static List<Integer> SLOTS_ARMORS = Arrays.asList(4, 13, 22, 31);
     private final static List<Integer> SLOTS_PLAYER = Arrays.asList(7, 16, 25, 34);
 
     private final ItemStack filler;
