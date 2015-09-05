@@ -91,6 +91,8 @@ public class ArmorStandGui implements Listener {
 
     private InventoryView gui;
 
+    private long lastClick = 0;
+
     public ArmorStandGui(EditArmorStands plugin, ArmorStand armorStand, Player player) {
         this.plugin = plugin;
         this.armorStand = armorStand;
@@ -125,6 +127,14 @@ public class ArmorStandGui implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if(open && !event.isCancelled() && event.getWhoClicked().getUniqueId() == player.getUniqueId()) {
             plugin.getLogger().info(event.getWhoClicked().getName() + " Action: " + event.getAction());
+            long curTime = System.currentTimeMillis();
+            if(lastClick + 100 > curTime) {
+                event.setCancelled(true);
+                plugin.getLogger().log(Level.WARNING, event.getWhoClicked().getName() + " tried to click too fast (" + (curTime - lastClick) + "ms)");
+                event.getWhoClicked().sendMessage(ChatColor.RED + "Please wait a tiny bit longer between your clicks!");
+                return;
+            }
+            lastClick = System.currentTimeMillis();
             if(event.getClickedInventory() == event.getWhoClicked().getOpenInventory().getTopInventory() && event.getView() == gui) {
                 if(event.getSlot() == 8) {
                     event.setCancelled(true);
