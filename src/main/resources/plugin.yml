@@ -12,6 +12,8 @@ commands:
               - Exit the editing mode
              /<command> name <name>
               - Set the ArmorStand's name, use & for colorcodes
+             /<command> move <x> <y> <z>
+              - Move the ArmorStand, use ~ for relatives
              /<command> [namevisible|gravity|visible|base|arms|size]
               - Toggle the option
              /<command> <bodypart> [pitch|yaw|roll] <degree>
@@ -36,6 +38,7 @@ permissions:
          editarmorstands.command.arms: true
          editarmorstands.command.size: true
          editarmorstands.command.pose: true
+         editarmorstands.command.move: true
          editarmorstands.nametag.name: true
          editarmorstands.nametag.name.clear: true
    editarmorstands.command.*:
@@ -52,6 +55,9 @@ permissions:
          editarmorstands.command.arms: true
          editarmorstands.command.size: true
          editarmorstands.command.pose: true
+         editarmorstands.command.move: true
+         editarmorstands.command.move.nextblock: true
+         editarmorstands.command.move.unlimited: true
    editarmorstands.nametag.*:
       description: Gives access to all NameTag options
       children:
@@ -87,6 +93,15 @@ permissions:
       default: op
    editarmorstands.command.pose:
       description: Allows a player to pose the armorstand
+      default: op
+   editarmorstands.command.move:
+      description: Allows a player to move an armorstand
+      default: op
+   editarmorstands.command.move.nextblock:
+      description: Allows a player to move an armorstand onto the next block (only 1 block at the time)
+      default: op
+   editarmorstands.command.move.unlimited:
+      description: Allows a player to move an armorstand unlimited blocks away
       default: op
    editarmorstands.nametag.name:
       description: Allows a player to name armorstands via rightclick with a nametag
