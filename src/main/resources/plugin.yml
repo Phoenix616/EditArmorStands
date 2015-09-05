@@ -1,6 +1,7 @@
 name: EditArmorStands
 main: de.themoep.EditArmorStands.EditArmorStands
-version: 1.3.0
+version: '${minecraft.plugin.version}'
+description: ${project.description}
 commands:
    editarmorstand:      
       aliases: [editas, eas]
