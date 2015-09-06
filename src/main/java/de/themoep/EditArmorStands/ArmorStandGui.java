@@ -12,7 +12,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
@@ -124,18 +125,30 @@ public class ArmorStandGui implements Listener {
     }
 
     @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if(open && event.getWhoClicked().getUniqueId().equals(player.getUniqueId()) && event.getView() == gui) {
+            for(int i = 0; i < inventory.getSize(); i++) {
+                if(event.getRawSlots().contains(i)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if(open && !event.isCancelled() && event.getWhoClicked().getUniqueId() == player.getUniqueId()) {
-            plugin.getLogger().info(event.getWhoClicked().getName() + " Action: " + event.getAction());
+        if(open && !event.isCancelled() && event.getWhoClicked().getUniqueId().equals(player.getUniqueId()) && event.getView() == gui) {
+            plugin.getLogger().info(event.getWhoClicked().getName() + " Slot: " + event.getSlot() + " Rawslot: " + event.getRawSlot() + " Action: " + event.getAction());
             long curTime = System.currentTimeMillis();
-            if(lastClick + 100 > curTime) {
+            if(lastClick + 50 > curTime) {
                 event.setCancelled(true);
                 plugin.getLogger().log(Level.WARNING, event.getWhoClicked().getName() + " tried to click too fast (" + (curTime - lastClick) + "ms)");
                 event.getWhoClicked().sendMessage(ChatColor.RED + "Please wait a tiny bit longer between your clicks!");
                 return;
             }
             lastClick = System.currentTimeMillis();
-            if(event.getClickedInventory() == event.getWhoClicked().getOpenInventory().getTopInventory() && event.getView() == gui) {
+            if(event.getRawSlot() < inventory.getSize()) {
                 if(event.getSlot() == 8) {
                     event.setCancelled(true);
                     plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
@@ -183,7 +196,7 @@ public class ArmorStandGui implements Listener {
                         event.setCancelled(true);
                     }
                 }
-            } else if(event.getClickedInventory() == event.getWhoClicked().getOpenInventory().getBottomInventory()) {
+            } else if(event.getRawSlot() >= inventory.getSize()) {
                 if(event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                     event.setCancelled(true);
                     List<Integer> slots = new ArrayList<Integer>(SLOTS_ARMORS);
@@ -388,8 +401,8 @@ public class ArmorStandGui implements Listener {
     }
 
     @EventHandler
-    public void onArmorStandInteract(PlayerInteractEntityEvent event) {
-        if(event.getRightClicked().getUniqueId() == armorStand.getUniqueId()) {
+    public void onArmorStandInteract(PlayerInteractAtEntityEvent event) {
+        if(event.getRightClicked().getUniqueId().equals(armorStand.getUniqueId())) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(ChatColor.RED + "Can't manipulate this Armor Stand! " + ChatColor.GOLD + player.getName() + ChatColor.RED + " is currently editing it!");
         }
@@ -397,28 +410,28 @@ public class ArmorStandGui implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        if(event.getPlayer().getUniqueId() == player.getUniqueId() && event.getView() == gui) {
+        if(event.getPlayer().getUniqueId().equals(player.getUniqueId()) && event.getView() == gui) {
             destroy();
         }
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if(event.getPlayer().getUniqueId() == player.getUniqueId()) {
+        if(event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
             destroy();
         }
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        if(event.getEntity().getUniqueId() == player.getUniqueId()) {
+        if(event.getEntity().getUniqueId().equals(player.getUniqueId())) {
             destroy();
         }
     }
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if(event.getPlayer().getUniqueId() == player.getUniqueId()) {
+        if(event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
             destroy();
             player.closeInventory();
         }
@@ -426,7 +439,7 @@ public class ArmorStandGui implements Listener {
 
     @EventHandler
     public void onArmorStandDestroy(EntityDeathEvent event) {
-        if(event.getEntity().getUniqueId() == armorStand.getUniqueId() && open) {
+        if(event.getEntity().getUniqueId().equals(armorStand.getUniqueId()) && open) {
             destroy();
             player.closeInventory();
         }

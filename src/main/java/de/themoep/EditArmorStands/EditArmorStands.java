@@ -56,17 +56,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
     static DecimalFormat df = new DecimalFormat("#.##");
 
-    private boolean spigot;
-
     public void onEnable() {
-        try {
-            Bukkit.class.getMethod("spigot");
-            spigot = true;
-            this.getLogger().info("Detected Spigot server. Items GUI enabled!");
-        } catch (NoSuchMethodException e) {
-            spigot = false;
-            this.getLogger().info("Detected a non-Spigot server. Items GUI will not work!");
-        }
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -96,7 +86,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 usage.add("&r - Rightclick an Armor Stand in the next 10s to select it");
                 usage.add("&e/eas exit");
                 usage.add("&r - Exit the editing mode");
-                if(spigot && sender.hasPermission("editarmorstands.command.items")) {
+                if(sender.hasPermission("editarmorstands.command.items")) {
                     usage.add("&e/eas items");
                     usage.add("&r - Show a gui to manipulte the items/armor");
                 }
@@ -204,16 +194,12 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             }
         } else if(args.length == 1) {
             if(args[0].equalsIgnoreCase("items")) {
-                if(spigot) {
-                    if(player.hasPermission("editarmorstands.command.items")) {
-                        ArmorStandGui gui = new ArmorStandGui(this, as, player);
-                        gui.show();
-                        return true;
-                    } else {
-                        player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.items");
-                    }
+                if(player.hasPermission("editarmorstands.command.items")) {
+                    ArmorStandGui gui = new ArmorStandGui(this, as, player);
+                    gui.show();
+                    return true;
                 } else {
-                    player.sendMessage(ChatColor.RED + "This functionality is only available on Spigot servers as Bukkit is missing some methods!");
+                    player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.items");
                 }
             } else if(args[0].equalsIgnoreCase("namevisible")) {
                 if(player.hasPermission("editarmorstands.command.namevisible")) {
@@ -482,7 +468,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     return;
                 }
             }
-            if(spigot && !event.getPlayer().isSneaking() && event.getPlayer().hasPermission("editarmrostands.openinventory")) {
+            if(!event.getPlayer().isSneaking() && event.getPlayer().hasPermission("editarmorstands.openinventory")) {
                 event.setCancelled(true);
                 ArmorStandGui gui = new ArmorStandGui(this, armorStand, event.getPlayer());
                 gui.show();
