@@ -12,7 +12,7 @@ commands:
              /<command> exit
               - Exit the editing mode
              /<command> items
-              - Show a gui to manipulte the items/armor
+              - Show a gui to manipulate the items/armor
              /<command> name <name>
               - Set the ArmorStand's name, use & for colorcodes
              /<command> move <x> <y> <z>

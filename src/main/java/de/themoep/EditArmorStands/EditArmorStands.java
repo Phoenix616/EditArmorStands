@@ -88,7 +88,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 usage.add("&r - Exit the editing mode");
                 if(sender.hasPermission("editarmorstands.command.items")) {
                     usage.add("&e/eas items");
-                    usage.add("&r - Show a gui to manipulte the items/armor");
+                    usage.add("&r - Show a gui to manipulate the items/armor");
                 }
                 if(sender.hasPermission("editarmorstands.command.name")) {
                     usage.add("&e/eas name <name>");
