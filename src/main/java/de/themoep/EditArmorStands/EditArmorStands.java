@@ -113,7 +113,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 if(sender.hasPermission("editarmorstands.command.pose")) {
                     usage.add("&e/eas rotate <degree>");
                     usage.add("&r - Rotate the whole Armor Stand");
-                    usage.add("&e/eas <bodypart> &r[&epitch&r|&eyaw&r|&eroll&r] <degree>");
+                    usage.add("&e/eas <bodypart> &r[&epitch&r|&eyaw&r|&eroll&r] &e<degree>");
                     usage.add("&r - Set an angle, use ~ for relatives");
                     usage.add("&e/eas <bodypart> <pitch> <yaw> <roll>");
                     usage.add("&r - Set all angles of a body part at once, use ~ for relatives");
@@ -128,16 +128,31 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     if(!sender.hasPermission("editarmorstands.command.pose")) {
                         sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
                         return true;
+                    } else if(args.length < 2) {
+                        sender.sendMessage(ChatColor.RED + "Usage: /eas " + args[0].toLowerCase() + " [pitch|yaw|roll] <degree>");
+                        sender.sendMessage(ChatColor.RED + "Or /eas " + args[0].toLowerCase() + " <pitch> <yaw> <roll>");
+                        return true;
                     }
                 } catch(IllegalArgumentException e) {
                     if(args[0].equalsIgnoreCase("y") || args[0].equalsIgnoreCase("yaw") || args[0].equalsIgnoreCase("r") || args[0].equalsIgnoreCase("rotate") || args[0].equalsIgnoreCase("rotation")) {
                         if(!sender.hasPermission("editarmorstands.command.pose")) {
                             sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
                             return true;
+                        } else if(args.length < 2) {
+                            sender.sendMessage(ChatColor.RED + "Usage: /eas " + args[0].toLowerCase() + " <degree>");
+                            return true;
                         }
-                    } else if(args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("move") || args[0].equalsIgnoreCase("items") || toggleOptions.contains(args[0].toLowerCase())) {
+                    } else if(args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("move") || args[0].equalsIgnoreCase("mv") || args[0].equalsIgnoreCase("items") || args[0].equalsIgnoreCase("inv") || args[0].equalsIgnoreCase("i") || toggleOptions.contains(args[0].toLowerCase())) {
+                        if(args[0].equalsIgnoreCase("mv")) {
+                            args[0] = "move";
+                        } else if(args[0].equalsIgnoreCase("inv") || args[0].equalsIgnoreCase("i")) {
+                            args[0] = "items";
+                        }
                         if(!sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
                             sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
+                            return true;
+                        } else if(args[0].equalsIgnoreCase("move") && args.length < 4) {
+                            sender.sendMessage(ChatColor.RED + "Usage: /eas move <x> <y> <z>");
                             return true;
                         }
                     } else {
@@ -179,21 +194,26 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             return true;
         } else if(args.length > 0 && args[0].equalsIgnoreCase("name")) {
             if(player.hasPermission("editarmorstands.command.name")) {
-                String name = "";
-                for(int i = 1; i < args.length; i++) {
-                    name += args[i] + " ";
+                if(args.length > 1) {
+                    String name = "";
+                    for(int i = 1; i < args.length; i++) {
+                        name += args[i] + " ";
+                    }
+                    if(player.hasPermission("editarmorstands.command.name.colored")) {
+                        name = ChatColor.translateAlternateColorCodes('&', name);
+                    }
+                    as.setCustomName(name.trim() + ChatColor.RESET);
+                    player.sendMessage(ChatColor.GREEN + "Set the Armor Stand's name to " + ChatColor.RESET + as.getCustomName() + ChatColor.GREEN + "!");
+                } else {
+                    as.setCustomName(null);
+                    player.sendMessage(ChatColor.GREEN + "Removed the Armor Stand's name!");
                 }
-                if(player.hasPermission("editarmorstands.command.name.colored")) {
-                    name = ChatColor.translateAlternateColorCodes('&', name);
-                }
-                as.setCustomName(name.trim() + ChatColor.RESET);
-                player.sendMessage(ChatColor.GREEN + "Set the Armor Stand's name to " + ChatColor.RESET + as.getCustomName() + ChatColor.GREEN + "!");
                 return true;
             } else {
                 player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.name");
             }
         } else if(args.length == 1) {
-            if(args[0].equalsIgnoreCase("items")) {
+            if(args[0].equalsIgnoreCase("items") || args[0].equalsIgnoreCase("inv") || args[0].equalsIgnoreCase("i")) {
                 if(player.hasPermission("editarmorstands.command.items")) {
                     ArmorStandGui gui = new ArmorStandGui(this, as, player);
                     gui.show();
@@ -331,7 +351,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
             }
         } else if(args.length == 4) {
-            if(args[0].equalsIgnoreCase("move")) {
+            if(args[0].equalsIgnoreCase("move") || args[0].equalsIgnoreCase("mv")) {
                 if(player.hasPermission("editarmorstands.command.move")) {
                     Location loc = as.getLocation();
                     int[] blockLoc = new int[]{loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()};
