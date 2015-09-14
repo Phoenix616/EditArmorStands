@@ -535,7 +535,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             final Listener spawnListener = new Listener() {
                 @EventHandler
                 public void onArmorStandSpawn(CreatureSpawnEvent event) {
-                    if(event.getEntity().getType() == EntityType.ARMOR_STAND && event.getEntity().getLocation().getBlock().getLocation() == loc) {
+                    if(event.getEntity().getType() == EntityType.ARMOR_STAND && event.getEntity().getLocation().getBlock().getLocation().equals(loc)) {
                         event.getEntity().setCustomName(finalName);
                     }
                 }
