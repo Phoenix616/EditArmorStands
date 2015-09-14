@@ -1,6 +1,5 @@
 package de.themoep.EditArmorStands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -14,9 +13,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -512,5 +515,37 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             for(Map.Entry<UUID, UUID> e : selectedArmorStands.entrySet())
                 if(e.getValue().equals(event.getEntity().getUniqueId()))
                     selectedArmorStands.remove(e.getKey());
+    }
+
+    @EventHandler
+    public void onArmorStandPlace(PlayerInteractEvent event) {
+        if(event.isCancelled())
+            return;
+
+        boolean isArmorStandPlacement = event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getItem().getType() == Material.ARMOR_STAND;
+        boolean isNamedArmorStand = isArmorStandPlacement && event.getItem().hasItemMeta() && event.getItem().getItemMeta().hasDisplayName();
+
+        if(isNamedArmorStand && event.getPlayer().hasPermission("editarmorstands.place.name")) {
+            String name = event.getItem().getItemMeta().getDisplayName();
+            if(event.getPlayer().hasPermission("editarmorstands.place.name.colored")) {
+                name = ChatColor.translateAlternateColorCodes('&', name);
+            }
+            final Location loc = event.getClickedBlock().getRelative(event.getBlockFace()).getLocation();
+            final String finalName = name;
+            final Listener spawnListener = new Listener() {
+                @EventHandler
+                public void onArmorStandSpawn(CreatureSpawnEvent event) {
+                    if(event.getEntity().getType() == EntityType.ARMOR_STAND && event.getEntity().getLocation().getBlock().getLocation() == loc) {
+                        event.getEntity().setCustomName(finalName);
+                    }
+                }
+            };
+            getServer().getPluginManager().registerEvents(spawnListener, this);
+            getServer().getScheduler().runTaskLater(this, new Runnable() {
+                public void run() {
+                    HandlerList.unregisterAll(spawnListener);
+                }
+            }, 20);
+        }
     }
 }

@@ -44,6 +44,7 @@ permissions:
          editarmorstands.command.size: true
          editarmorstands.command.pose: true
          editarmorstands.command.move: true
+         editarmorstands.place.name: true
          editarmorstands.nametag.name: true
          editarmorstands.nametag.name.clear: true
          editarmorstands.openinventory: true
@@ -73,6 +74,12 @@ permissions:
          editarmorstands.nametag.name.clear: true
    editarmorstands.command.items:
       description: Allows a player to show a gui to modify the armostand's inventory
+      default: op
+   editarmorstands.place.name:
+      description: Allows a player to name an armor stand by placing a named item
+      default: op
+   editarmorstands.place.name.colored:
+      description: Allows a player to name an armor stand by placing a named item
       default: op
    editarmorstands.command.name:
       description: Allows a player to set the name of an armorstand
