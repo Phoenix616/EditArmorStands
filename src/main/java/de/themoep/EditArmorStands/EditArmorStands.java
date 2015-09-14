@@ -24,8 +24,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -46,11 +48,13 @@ import java.util.UUID;
 
 public class EditArmorStands extends JavaPlugin implements Listener, CommandExecutor {
 
-    HashMap<UUID, Long> clickTimeout = new HashMap<UUID, Long>();
+    Map<UUID, Long> clickTimeout = new HashMap<UUID, Long>();
 
-    HashMap<UUID, UUID> selectedArmorStands = new HashMap<UUID, UUID>();
+    Map<UUID, UUID> selectedArmorStands = new HashMap<UUID, UUID>();
 
-    HashMap<UUID, String[]> waitingCommands = new HashMap<UUID, String[]>();
+    Map<UUID, String[]> waitingCommands = new HashMap<UUID, String[]>();
+
+    Set<UUID> persistent = new HashSet<UUID>();
 
     static List<String> toggleOptions = Arrays.asList("namevisible", "gravity", "visible", "base", "arms", "size");
 
@@ -69,7 +73,9 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 clickTimeout.put(p.getUniqueId(), System.currentTimeMillis());
                 waitingCommands.put(p.getUniqueId(), args);
             } else if(args[0].equalsIgnoreCase("exit")) {
-                if(clickTimeout.containsKey(p.getUniqueId()) && clickTimeout.get(p.getUniqueId()) + 10 * 1000 < System.currentTimeMillis()) {
+                if(persistent.contains(p.getUniqueId())) {
+                    sender.sendMessage(ChatColor.GREEN + "Disabled persistent mode!");
+                } else if(clickTimeout.containsKey(p.getUniqueId()) && clickTimeout.get(p.getUniqueId()) + 10 * 1000 < System.currentTimeMillis()) {
                     sender.sendMessage(ChatColor.GREEN + "Canceled pending click action!");
                 } else {
                     sender.sendMessage(ChatColor.GREEN + "Exited Armor Stand editing mode!");
@@ -84,8 +90,10 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
                 usage.add("&e/editarmorstand &rAlias: &e/eas&r)");
                 usage.add("&r - Rightclick an Armor Stand in the next 10s to select it");
+                usage.add("&e/eas persist");
+                usage.add("&r - Apply options via click without rerunning the command");
                 usage.add("&e/eas exit");
-                usage.add("&r - Exit the editing mode");
+                usage.add("&r - Exit the editing/persist mode");
                 if(sender.hasPermission("editarmorstands.command.items")) {
                     usage.add("&e/eas items");
                     usage.add("&r - Show a gui to manipulate the items/armor");
@@ -122,6 +130,9 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
                 for(String s : usage)
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+            } else if(args[0].equalsIgnoreCase("persist")) {
+                persistent.add(p.getUniqueId());
+                sender.sendMessage(ChatColor.YELLOW + "Enabled persistent mode. Disable via /eas exit");
             } else {
                 try {
                     BodyPart.fromString(args[0]);
@@ -447,17 +458,15 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
     public void onArmorStandClick(PlayerInteractAtEntityEvent event) {
         if(!event.isCancelled() && event.getRightClicked() instanceof ArmorStand) {
             ArmorStand armorStand = (ArmorStand) event.getRightClicked();
-            if(clickTimeout.containsKey(event.getPlayer().getUniqueId()) && waitingCommands.containsKey(event.getPlayer().getUniqueId())) {
+            if((persistent.contains(event.getPlayer().getUniqueId()) || clickTimeout.containsKey(event.getPlayer().getUniqueId())) && waitingCommands.containsKey(event.getPlayer().getUniqueId())) {
                 event.setCancelled(true);
-                if(clickTimeout.get(event.getPlayer().getUniqueId()) + 10 * 1000 > System.currentTimeMillis()) {
-                    if(calculateAction(event.getPlayer(), armorStand, waitingCommands.get(event.getPlayer().getUniqueId()))) {
-                        clickTimeout.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
-                    }
+                if(persistent.contains(event.getPlayer().getUniqueId()) || clickTimeout.get(event.getPlayer().getUniqueId()) + 10 * 1000 > System.currentTimeMillis()) {
+                    calculateAction(event.getPlayer(), armorStand, waitingCommands.get(event.getPlayer().getUniqueId()));
                 } else {
-                    clickTimeout.remove(event.getPlayer().getUniqueId());
                     waitingCommands.remove(event.getPlayer().getUniqueId());
                     event.getPlayer().sendMessage(ChatColor.RED + "Your click action expired!");
                 }
+                clickTimeout.remove(event.getPlayer().getUniqueId());
                 return;
             }
             if(event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
