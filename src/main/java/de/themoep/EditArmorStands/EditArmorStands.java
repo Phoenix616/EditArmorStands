@@ -80,6 +80,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                 } else {
                     sender.sendMessage(ChatColor.GREEN + "Exited Armor Stand editing mode!");
                 }
+                persistent.remove(p.getUniqueId());
                 selectedArmorStands.remove(p.getUniqueId());
                 waitingCommands.remove(p.getUniqueId());
                 clickTimeout.remove(p.getUniqueId());
@@ -132,7 +133,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
             } else if(args[0].equalsIgnoreCase("persist")) {
                 persistent.add(p.getUniqueId());
-                sender.sendMessage(ChatColor.YELLOW + "Enabled persistent mode. Disable via /eas exit");
+                sender.sendMessage(ChatColor.GREEN + "Enabled persistent mode. Disable via " + ChatColor.YELLOW + "/eas exit");
             } else {
                 try {
                     BodyPart.fromString(args[0]);
