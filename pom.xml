@@ -8,6 +8,11 @@
     <version>1.3.0-SNAPSHOT</version>
     <description>Bukkit plugin to edit ArmorStands (poses/gravity/etc.)</description>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <build.number>${buildNumber}</build.number>
+    </properties>
+
     <repositories>
         <repository>
             <id>spigot-repo</id>
