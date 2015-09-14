@@ -481,6 +481,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                         String name = hi.getItemMeta().getDisplayName();
                         if(event.getPlayer().hasPermission("editarmorstands.nametag.name.colored")) {
                             name = ChatColor.translateAlternateColorCodes('&', name);
+                        } else {
+                            name = ChatColor.ITALIC + name;
                         }
                         armorStand.setCustomName(name + ChatColor.RESET);
                         armorStand.setCustomNameVisible(true);
@@ -529,14 +531,17 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
             String name = event.getItem().getItemMeta().getDisplayName();
             if(event.getPlayer().hasPermission("editarmorstands.place.name.colored")) {
                 name = ChatColor.translateAlternateColorCodes('&', name);
+            } else {
+                name = ChatColor.ITALIC + name;
             }
             final Location loc = event.getClickedBlock().getRelative(event.getBlockFace()).getLocation();
-            final String finalName = name;
+            final String finalName = name + ChatColor.RESET;
             final Listener spawnListener = new Listener() {
                 @EventHandler
                 public void onArmorStandSpawn(CreatureSpawnEvent event) {
                     if(event.getEntity().getType() == EntityType.ARMOR_STAND && event.getEntity().getLocation().getBlock().getLocation().equals(loc)) {
                         event.getEntity().setCustomName(finalName);
+                        event.getEntity().setCustomNameVisible(true);
                     }
                 }
             };
