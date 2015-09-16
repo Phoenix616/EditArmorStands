@@ -371,6 +371,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                     Location loc = as.getLocation();
                     int[] blockLoc = new int[]{loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()};
                     double[] locArr = new double[]{loc.getX(), loc.getY(), loc.getZ()};
+                    double[] oldLocArr = new double[]{loc.getX(), loc.getY(), loc.getZ()};
                     for(int i = 0; i < 3; i++) {
                         try {
                             if(args[i + 1].startsWith("~")) {
@@ -383,7 +384,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
                             if(Math.floor(locArr[i]) != blockLoc[i] && !player.hasPermission("editarmorstands.command.move.nextblock") && !player.hasPermission("editarmorstands.command.move.unlimited")) {
                                 player.sendMessage(ChatColor.RED + "You can only manipulate the position of an Armor Stands on the " + ChatColor.GOLD + " same block" + ChatColor.RED + ", not move it onto another block! (" + args[i + 1] + " would move it onto another one!)");
                                 return false;
-                            } else if(locArr[i] > 1 && !player.hasPermission("editarmorstands.command.move.unlimited")) {
+                            } else if(Math.abs(locArr[i] - oldLocArr[i]) > 1 && !player.hasPermission("editarmorstands.command.move.unlimited")) {
                                 player.sendMessage(ChatColor.RED + "You can't move Armor Stands more than " + ChatColor.GOLD + "one block" + ChatColor.RED + "! You inputted " + ChatColor.GOLD + locArr[i] + ChatColor.RED + "!");
                                 return false;
                             }
