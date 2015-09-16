@@ -525,7 +525,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
         if(event.isCancelled())
             return;
 
-        boolean isArmorStandPlacement = event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getItem().getType() == Material.ARMOR_STAND;
+        boolean isArmorStandPlacement = event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getItem() != null && event.getItem().getType() == Material.ARMOR_STAND;
         boolean isNamedArmorStand = isArmorStandPlacement && event.getItem().hasItemMeta() && event.getItem().getItemMeta().hasDisplayName();
 
         if(isNamedArmorStand && event.getPlayer().hasPermission("editarmorstands.place.name")) {
