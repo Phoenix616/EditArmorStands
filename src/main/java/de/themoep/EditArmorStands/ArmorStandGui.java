@@ -139,7 +139,6 @@ public class ArmorStandGui implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if(open && !event.isCancelled() && event.getWhoClicked().getUniqueId().equals(player.getUniqueId()) && event.getView() == gui) {
-            plugin.getLogger().info(event.getWhoClicked().getName() + " Slot: " + event.getSlot() + " Rawslot: " + event.getRawSlot() + " Action: " + event.getAction());
             long curTime = System.currentTimeMillis();
             if(lastClick + 50 > curTime) {
                 event.setCancelled(true);
