@@ -19,6 +19,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -462,6 +463,11 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
     @EventHandler(priority = EventPriority.MONITOR)
     public void onArmorStandClick(PlayerInteractAtEntityEvent event) {
         if(!event.isCancelled() && event.getRightClicked() instanceof ArmorStand) {
+            PlayerInteractEntityEvent pie = new PlayerInteractEntityEvent(event.getPlayer(), event.getRightClicked());
+            getServer().getPluginManager().callEvent(pie);
+            if(pie.isCancelled()) {
+                return;
+            }
             ArmorStand armorStand = (ArmorStand) event.getRightClicked();
             if((persistent.contains(event.getPlayer().getUniqueId()) || clickTimeout.containsKey(event.getPlayer().getUniqueId())) && waitingCommands.containsKey(event.getPlayer().getUniqueId())) {
                 event.setCancelled(true);
