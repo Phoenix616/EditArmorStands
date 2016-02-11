@@ -459,7 +459,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
         return false;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onArmorStandClick(PlayerInteractAtEntityEvent event) {
         if(!event.isCancelled() && event.getRightClicked() instanceof ArmorStand) {
             ArmorStand armorStand = (ArmorStand) event.getRightClicked();
