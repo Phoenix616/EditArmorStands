@@ -316,6 +316,9 @@ public class ArmorStandGui implements Listener {
         ItemStack curClone = current == null ? null : current.clone();
         ItemStack handClone = hand == null ? null : hand.clone();
         switch(action) {
+            case DROP_ALL_SLOT:
+            case PICKUP_ALL:
+                return null;
             case SWAP_WITH_CURSOR:
                 return handClone;
             case CLONE_STACK:
