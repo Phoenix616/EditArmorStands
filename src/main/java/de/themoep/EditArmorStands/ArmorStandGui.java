@@ -315,39 +315,32 @@ public class ArmorStandGui implements Listener {
     private ItemStack getResultItem(int slot, InventoryAction action, ItemStack current, ItemStack hand) throws ActionNotSupported {
         ItemStack curClone = current == null ? null : current.clone();
         ItemStack handClone = hand == null ? null : hand.clone();
-        ItemStack r = null;
         switch(action) {
             case SWAP_WITH_CURSOR:
-                r = handClone;
-                break;
+                return handClone;
             case CLONE_STACK:
-                r = curClone;
-                break;
+                return curClone;
             case PLACE_ALL:
                 if(curClone != null && handClone != null) {
                     handClone.setAmount(curClone.getAmount() + handClone.getAmount());
                 }
-                r = handClone;
-                break;
+                return handClone;
             case DROP_ONE_SLOT:
             case PICKUP_ONE:
                 if(curClone != null) {
                     curClone.setAmount(curClone.getAmount() - 1);
                 }
-                r = curClone;
-                break;
+                return curClone;
             case PLACE_ONE:
                 if(handClone != null) {
                     handClone.setAmount(1);
                 }
-                r = handClone;
-                break;
+                return handClone;
             case PLACE_SOME:
                 if(curClone != null) {
                     curClone.setAmount(curClone.getMaxStackSize());
                 }
-                r = curClone;
-                break;
+                return curClone;
             case PICKUP_SOME:
                 if(curClone != null && handClone != null) {
                     curClone.setAmount(curClone.getAmount() - (handClone.getMaxStackSize() - handClone.getAmount()));
@@ -355,20 +348,15 @@ public class ArmorStandGui implements Listener {
                     int amount = curClone.getAmount() - curClone.getMaxStackSize();
                     curClone.setAmount(amount > 0 ? amount : 0);
                 }
-                r = curClone;
-                break;
+                return curClone;
             case MOVE_TO_OTHER_INVENTORY:
                 if(SLOTS_PLAYER.contains(slot) || SLOTS_ARMORS.contains(slot)) {
-                    r = swap(slot);
+                    return swap(slot);
                 }
-                break;
+                return null;
             default:
                 throw new ActionNotSupported();
         }
-        if(r == null) {
-            throw new ActionNotSupported();
-        }
-        return r;
     }
 
     private ItemStack swap(int slot) {
