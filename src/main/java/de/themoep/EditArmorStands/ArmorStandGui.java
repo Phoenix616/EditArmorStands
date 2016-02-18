@@ -191,6 +191,13 @@ public class ArmorStandGui implements Listener {
                                 event.getWhoClicked().getInventory().setItem(emptySlot, hbItem);
                             }
                         }
+                    } else if(event.getAction() == InventoryAction.HOTBAR_SWAP) {
+                        ItemStack hbItem = event.getWhoClicked().getInventory().getItem(event.getHotbarButton());
+                        if(setSlot(event.getSlot(), hbItem)) {
+                            build();
+                        } else {
+                            event.setCancelled(true);
+                        }
                     } else {
                         event.setCancelled(true);
                     }
@@ -308,36 +315,39 @@ public class ArmorStandGui implements Listener {
     private ItemStack getResultItem(int slot, InventoryAction action, ItemStack current, ItemStack hand) throws ActionNotSupported {
         ItemStack curClone = current == null ? null : current.clone();
         ItemStack handClone = hand == null ? null : hand.clone();
+        ItemStack r = null;
         switch(action) {
-            case DROP_ALL_SLOT:
-            case PICKUP_ALL:
-            case HOTBAR_SWAP:
-                return null;
             case SWAP_WITH_CURSOR:
-                return handClone;
+                r = handClone;
+                break;
             case CLONE_STACK:
-                return curClone;
+                r = curClone;
+                break;
             case PLACE_ALL:
                 if(curClone != null && handClone != null) {
                     handClone.setAmount(curClone.getAmount() + handClone.getAmount());
                 }
-                return handClone;
+                r = handClone;
+                break;
             case DROP_ONE_SLOT:
             case PICKUP_ONE:
                 if(curClone != null) {
                     curClone.setAmount(curClone.getAmount() - 1);
                 }
-                return curClone;
+                r = curClone;
+                break;
             case PLACE_ONE:
                 if(handClone != null) {
                     handClone.setAmount(1);
                 }
-                return handClone;
+                r = handClone;
+                break;
             case PLACE_SOME:
                 if(curClone != null) {
                     curClone.setAmount(curClone.getMaxStackSize());
                 }
-                return curClone;
+                r = curClone;
+                break;
             case PICKUP_SOME:
                 if(curClone != null && handClone != null) {
                     curClone.setAmount(curClone.getAmount() - (handClone.getMaxStackSize() - handClone.getAmount()));
@@ -345,15 +355,20 @@ public class ArmorStandGui implements Listener {
                     int amount = curClone.getAmount() - curClone.getMaxStackSize();
                     curClone.setAmount(amount > 0 ? amount : 0);
                 }
-                return curClone;
+                r = curClone;
+                break;
             case MOVE_TO_OTHER_INVENTORY:
                 if(SLOTS_PLAYER.contains(slot) || SLOTS_ARMORS.contains(slot)) {
-                    return swap(slot);
+                    r = swap(slot);
                 }
-                return null;
+                break;
             default:
                 throw new ActionNotSupported();
         }
+        if(r == null) {
+            throw new ActionNotSupported();
+        }
+        return r;
     }
 
     private ItemStack swap(int slot) {
