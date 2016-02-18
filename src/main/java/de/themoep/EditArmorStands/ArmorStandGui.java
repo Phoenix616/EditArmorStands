@@ -219,6 +219,8 @@ public class ArmorStandGui implements Listener {
                             break;
                         }
                     }
+                } else if(event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
+                    event.setCancelled(true);
                 }
             }
         }
