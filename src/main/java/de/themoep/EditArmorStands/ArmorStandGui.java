@@ -192,11 +192,11 @@ public class ArmorStandGui implements Listener {
                             }
                         }
                     } else if(event.getAction() == InventoryAction.HOTBAR_SWAP) {
+                        event.setCancelled(true);
                         ItemStack hbItem = event.getWhoClicked().getInventory().getItem(event.getHotbarButton());
                         if(setSlot(event.getSlot(), hbItem)) {
                             build();
-                        } else {
-                            event.setCancelled(true);
+                            event.getWhoClicked().getInventory().setItem(event.getHotbarButton(), cur);
                         }
                     } else {
                         event.setCancelled(true);
