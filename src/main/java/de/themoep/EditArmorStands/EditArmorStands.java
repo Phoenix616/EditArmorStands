@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * EditArmorStands - Plugin to edit armor stand poses and options
@@ -64,8 +66,37 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
     static DecimalFormat df = new DecimalFormat("#.##");
 
+    private int serverVersion = 0;
+
     public void onEnable() {
+        Matcher versionMatcher = Pattern.compile(".*\\(MC: (.*)\\)").matcher(getServer().getVersion());
+        if(versionMatcher.find()) {
+            String[] version = versionMatcher.group(1).split("[.]");
+            for(int i = 0; i < version.length && i < 3; i++) {
+                try {
+                    int n = Integer.parseInt(version[i]);
+                    serverVersion += n * Math.pow(100, 2 - i);
+                } catch(NumberFormatException e) {
+                    getLogger().warning("Could not parse " + version[i] + " as an integer?");
+                }
+            }
+        }
+
+        if(serverVersion != 0) {
+            getLogger().info("Detect server " + serverVersion);
+            if(serverVersion < 10800) {
+                getLogger().warning("Armor Stands weren't in Minecraft before 1.8? What are you trying to do with this plugin?");
+                getServer().getPluginManager().disablePlugin(this);
+            }
+        } else {
+            getLogger().warning("Could not detect server version!");
+        }
+
         getServer().getPluginManager().registerEvents(this, this);
+    }
+
+    public int getServerVersion() {
+        return serverVersion;
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

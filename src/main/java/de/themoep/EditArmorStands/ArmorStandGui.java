@@ -208,7 +208,9 @@ public class ArmorStandGui implements Listener {
                     List<Integer> slots = new ArrayList<Integer>(SLOTS_ARMORS);
                     slots.addAll(SLOTS_PLAYER);
                     slots.add(12);
-                    //slots.add(14);
+                    if(plugin.getServerVersion() >= 10900) {
+                        slots.add(14);
+                    }
                     for(int i : slots) {
                         ItemStack target = event.getWhoClicked().getOpenInventory().getTopInventory().getItem(i);
                         if((target == null || target.getType() == Material.AIR) && isValidItem(i, event.getCurrentItem())) {
@@ -248,8 +250,12 @@ public class ArmorStandGui implements Listener {
                 case 13:
                     armorStand.setChestplate(item);
                     break;
-                /*case 14:
-                    break;*/
+                case 14:
+                    if(plugin.getServerVersion() < 10900) {
+                        return false;
+                    }
+                    armorStand.getEquipment().setItemInOffHand(item);
+                    break;
                 case 22:
                     armorStand.setLeggings(item);
                     break;
@@ -285,12 +291,14 @@ public class ArmorStandGui implements Listener {
             case 13:
                 return armorStand.getChestplate();
             case 14:
-                ItemStack leftArm = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
-                ItemMeta laim = leftArm.getItemMeta();
-                laim.setDisplayName(ChatColor.RED + "Can't set the left arm until 1.9!");
-                leftArm.setItemMeta(laim);
-                return leftArm;
-                //return armorStand.getItemInLeftHand();
+                if(plugin.getServerVersion() < 10900) {
+                    ItemStack leftArm = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
+                    ItemMeta laim = leftArm.getItemMeta();
+                    laim.setDisplayName(ChatColor.RED + "The offhand item cannot be set in 1.8!");
+                    leftArm.setItemMeta(laim);
+                    return leftArm;
+                }
+                return armorStand.getEquipment().getItemInOffHand();
             case 22:
                 return armorStand.getLeggings();
             case 31:
@@ -391,8 +399,9 @@ public class ArmorStandGui implements Listener {
             case 7:
                 return empty || HELMETS.contains(itemStack.getType());
             case 12:
-            //case 14:
                 return true;
+            case 14:
+                return plugin.getServerVersion() >= 10900;
             case 13:
             case 16:
                 return empty || CHESTPLATES.contains(itemStack.getType());
