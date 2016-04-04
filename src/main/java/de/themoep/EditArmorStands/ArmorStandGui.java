@@ -1,7 +1,9 @@
 package de.themoep.EditArmorStands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Instrument;
 import org.bukkit.Material;
+import org.bukkit.Note;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +22,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -164,6 +167,7 @@ public class ArmorStandGui implements Listener {
                     plugin.getLogger().log(Level.WARNING, "The item " + event.getWhoClicked().getName() + " tried to pickup was not the same as the one in the inventory (Armor Stand or player)! Duping attempt?");
                     event.setCurrentItem(realItem);
                     event.getWhoClicked().sendMessage(ChatColor.RED + "This inventory's items were modified! Please try again!");
+                    errorSound();
                     return;
                 }
                 ItemStack hand = event.getCursor();
@@ -171,6 +175,7 @@ public class ArmorStandGui implements Listener {
                     ItemStack result = getResultItem(event.getSlot(), event.getAction(), cur, hand);
                     if(!setSlot(event.getSlot(), result)) {
                         event.setCancelled(true);
+                        errorSound();
                     } else if(event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && (SLOTS_PLAYER.contains(event.getSlot()) || SLOTS_ARMORS.contains(event.getSlot()))) {
                         build();
                         event.setCancelled(true);
@@ -200,9 +205,11 @@ public class ArmorStandGui implements Listener {
                         }
                     } else {
                         event.setCancelled(true);
+                        errorSound();
                     }
                 } catch(ItemNotSuitable e) {
                     event.setCancelled(true);
+                    errorSound();
                 }
             } else if(event.getRawSlot() >= inventory.getSize()) {
                 if(event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
@@ -225,9 +232,23 @@ public class ArmorStandGui implements Listener {
                     }
                 } else if(event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
                     event.setCancelled(true);
+                    errorSound();
                 }
             }
         }
+    }
+
+    private void errorSound() {
+        final Note note = new Note(2, Note.Tone.A, true);
+        player.playNote(player.getLocation(), Instrument.BASS_GUITAR, note);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(player.isOnline()) {
+                    player.playNote(player.getLocation(), Instrument.BASS_GUITAR, note);
+                }
+            }
+        }.runTaskLater(plugin, 20);
     }
 
     private boolean areSimilar(ItemStack item1, ItemStack item2) {
