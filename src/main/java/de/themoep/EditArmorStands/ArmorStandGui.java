@@ -376,7 +376,7 @@ public class ArmorStandGui implements Listener {
         int swap = getSwap(slot);
         ItemStack slotItem = getSlotItem(slot);
         ItemStack item = getSlotItem(swap);
-        if(setSlot(swap, slotItem)) {
+        if(isValidItem(slot, item) && setSlot(swap, slotItem)) {
             return item;
         }
         return null;
