@@ -396,6 +396,7 @@ public class ArmorStandGui implements Listener {
         boolean empty = itemStack == null || itemStack.getType() == Material.AIR;
         switch(slot) {
             case 4:
+                return empty || HELMETS.contains(itemStack.getType()) || itemStack.getType().isBlock();
             case 7:
                 return empty || HELMETS.contains(itemStack.getType());
             case 12:
