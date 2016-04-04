@@ -239,7 +239,7 @@ public class ArmorStandGui implements Listener {
     }
 
     private void errorSound() {
-        final Note note = new Note(2, Note.Tone.A, true);
+        final Note note = new Note(1, Note.Tone.A, true);
         player.playNote(player.getLocation(), Instrument.BASS_GUITAR, note);
         new BukkitRunnable() {
             @Override
