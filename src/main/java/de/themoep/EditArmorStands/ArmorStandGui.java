@@ -248,7 +248,7 @@ public class ArmorStandGui implements Listener {
                     player.playNote(player.getLocation(), Instrument.BASS_GUITAR, note);
                 }
             }
-        }.runTaskLater(plugin, 20);
+        }.runTaskLater(plugin, 5);
     }
 
     private boolean areSimilar(ItemStack item1, ItemStack item2) {
