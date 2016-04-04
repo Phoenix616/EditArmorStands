@@ -201,6 +201,8 @@ public class ArmorStandGui implements Listener {
                     } else {
                         event.setCancelled(true);
                     }
+                } catch(ItemNotSuitable e) {
+                    event.setCancelled(true);
                 }
             } else if(event.getRawSlot() >= inventory.getSize()) {
                 if(event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
@@ -322,7 +324,7 @@ public class ArmorStandGui implements Listener {
         }
     }
 
-    private ItemStack getResultItem(int slot, InventoryAction action, ItemStack current, ItemStack hand) throws ActionNotSupported {
+    private ItemStack getResultItem(int slot, InventoryAction action, ItemStack current, ItemStack hand) throws ActionNotSupported, ItemNotSuitable {
         ItemStack curClone = current == null ? null : current.clone();
         ItemStack handClone = hand == null ? null : hand.clone();
         switch(action) {
@@ -372,14 +374,14 @@ public class ArmorStandGui implements Listener {
         }
     }
 
-    private ItemStack swap(int slot) {
+    private ItemStack swap(int slot) throws ItemNotSuitable {
         int swap = getSwap(slot);
         ItemStack slotItem = getSlotItem(slot);
         ItemStack item = getSlotItem(swap);
         if(isValidItem(slot, item) && setSlot(swap, slotItem)) {
             return item;
         }
-        return null;
+        throw new ItemNotSuitable();
     }
 
     private int getSwap(int slot) {
@@ -468,6 +470,10 @@ public class ArmorStandGui implements Listener {
     }
 
     private class ActionNotSupported extends Throwable {
+
+    }
+
+    private class ItemNotSuitable extends Throwable {
 
     }
 }
