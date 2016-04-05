@@ -150,7 +150,7 @@ public class ArmorStandGui implements Listener {
                 return;
             }
             lastClick = System.currentTimeMillis();
-            if(event.getRawSlot() < inventory.getSize()) {
+            if(event.getRawSlot() > -1 && event.getRawSlot() < inventory.getSize()) {
                 if(event.getSlot() == 8) {
                     event.setCancelled(true);
                     plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
