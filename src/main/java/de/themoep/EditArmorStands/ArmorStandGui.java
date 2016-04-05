@@ -206,6 +206,7 @@ public class ArmorStandGui implements Listener {
                     }
                 } catch(ItemNotSuitable e) {
                     if(event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && (SLOTS_PLAYER.contains(event.getSlot()) || SLOTS_ARMORS.contains(event.getSlot()))) {
+                        setSlot(event.getSlot(), null);
                         event.setCancelled(false);
                     } else {
                         event.setCancelled(true);
