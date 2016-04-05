@@ -1,9 +1,7 @@
 package de.themoep.EditArmorStands;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Instrument;
 import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +20,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
