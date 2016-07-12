@@ -552,7 +552,9 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
     @EventHandler
     public void onArmorStandDestroy(EntityDamageEvent event) {
-        if(event.getEntity().getType() == EntityType.ARMOR_STAND && selectedArmorStands.containsValue(event.getEntity().getUniqueId())) {
+        if(event.getEntity() instanceof ArmorStand
+                && event.getDamage() >= ((ArmorStand) event.getEntity()).getHealth()
+                && selectedArmorStands.containsValue(event.getEntity().getUniqueId())) {
             Iterator<UUID> it = selectedArmorStands.values().iterator();
             while (it.hasNext()) {
                 if (event.getEntity().getUniqueId().equals(it.next())) {
