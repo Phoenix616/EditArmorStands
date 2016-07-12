@@ -17,7 +17,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -551,10 +551,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onArmorStandDestroy(EntityDamageEvent event) {
-        if(event.getEntity() instanceof ArmorStand
-                && event.getDamage() >= ((ArmorStand) event.getEntity()).getHealth()
-                && selectedArmorStands.containsValue(event.getEntity().getUniqueId())) {
+    public void onArmorStandDestroy(EntityDeathEvent event) {
+        if(event.getEntity().getType() == EntityType.ARMOR_STAND && selectedArmorStands.containsValue(event.getEntity().getUniqueId())) {
             Iterator<UUID> it = selectedArmorStands.values().iterator();
             while (it.hasNext()) {
                 if (event.getEntity().getUniqueId().equals(it.next())) {
