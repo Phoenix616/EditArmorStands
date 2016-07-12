@@ -492,9 +492,9 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
         return false;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onArmorStandClick(PlayerInteractAtEntityEvent event) {
-        if(!event.isCancelled() && event.getRightClicked() instanceof ArmorStand) {
+        if(event.getRightClicked() instanceof ArmorStand) {
             PlayerInteractEntityEvent pie = new PlayerInteractEntityEvent(event.getPlayer(), event.getRightClicked());
             getServer().getPluginManager().callEvent(pie);
             if(pie.isCancelled()) {
@@ -550,7 +550,7 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onArmorStandDestroy(EntityDamageEvent event) {
         if(event.getEntity() instanceof ArmorStand
                 && event.getDamage() >= ((ArmorStand) event.getEntity()).getHealth()
@@ -564,11 +564,8 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onArmorStandPlace(PlayerInteractEvent event) {
-        if(event.isCancelled())
-            return;
-
         boolean isArmorStandPlacement = event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getItem() != null && event.getItem().getType() == Material.ARMOR_STAND;
         boolean isNamedArmorStand = isArmorStandPlacement && event.getItem().hasItemMeta() && event.getItem().getItemMeta().hasDisplayName();
 
