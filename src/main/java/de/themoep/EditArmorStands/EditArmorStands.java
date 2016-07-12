@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -551,10 +552,14 @@ public class EditArmorStands extends JavaPlugin implements Listener, CommandExec
 
     @EventHandler
     public void onArmorStandDestroy(EntityDamageEvent event) {
-        if(event.getEntity().getType() == EntityType.ARMOR_STAND && selectedArmorStands.containsValue(event.getEntity().getUniqueId()))
-            for(Map.Entry<UUID, UUID> e : selectedArmorStands.entrySet())
-                if(e.getValue().equals(event.getEntity().getUniqueId()))
-                    selectedArmorStands.remove(e.getKey());
+        if(event.getEntity().getType() == EntityType.ARMOR_STAND && selectedArmorStands.containsValue(event.getEntity().getUniqueId())) {
+            Iterator<UUID> it = selectedArmorStands.values().iterator();
+            while (it.hasNext()) {
+                if (event.getEntity().getUniqueId().equals(it.next())) {
+                    it.remove();
+                }
+            }
+        }
     }
 
     @EventHandler
