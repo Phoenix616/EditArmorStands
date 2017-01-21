@@ -8,7 +8,7 @@ import org.bukkit.util.Vector;
 /**
  * EditArmorStands - Plugin to edit armor stand poses and options
  * Copyright (C) 2015 Max Lee (https://github.com/Phoenix616/)
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,23 +20,23 @@ import org.bukkit.util.Vector;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  */
- 
+
 public class ArmorStandPoser {
-    
+
     private ArmorStand as;
-    
+
     public ArmorStandPoser(ArmorStand as) {
         this.as = as;
     }
 
     public int setSingleAngle(BodyPart part, Axis axis, int angle, boolean relative) {
         try {
-            if(part == BodyPart.HEAD) {
+            if (part == BodyPart.HEAD) {
                 EulerAngle ea = this.as.getHeadPose();
                 this.as.setHeadPose(getEulerAngleFromInput(axis, ea, angle, relative));
-                if(relative) {
+                if (relative) {
                     double rad = 0;
-                    switch(axis) {
+                    switch (axis) {
                         case YAW:
                             rad = ea.getX();
                             break;
@@ -49,25 +49,25 @@ public class ArmorStandPoser {
                     }
                     return (int) Math.toDegrees(rad);
                 }
-            } else if(part == BodyPart.BODY) {
+            } else if (part == BodyPart.BODY) {
                 this.as.setBodyPose(getEulerAngleFromInput(axis, this.as.getBodyPose(), angle, relative));
-                return (relative) ?(int) Math.toDegrees(this.as.getBodyPose().getX()) : angle;
+                return (relative) ? (int) Math.toDegrees(this.as.getBodyPose().getX()) : angle;
 
-            } else if(part == BodyPart.LEFTARM) {
+            } else if (part == BodyPart.LEFTARM) {
                 this.as.setLeftArmPose(getEulerAngleFromInput(axis, this.as.getLeftArmPose(), angle, relative));
-                return (relative) ?(int) Math.toDegrees(this.as.getLeftArmPose().getX()) : angle;
+                return (relative) ? (int) Math.toDegrees(this.as.getLeftArmPose().getX()) : angle;
 
-            } else if(part == BodyPart.LEFTLEG) {
+            } else if (part == BodyPart.LEFTLEG) {
                 this.as.setLeftLegPose(getEulerAngleFromInput(axis, this.as.getLeftLegPose(), angle, relative));
-                return (relative) ?(int) Math.toDegrees(this.as.getLeftLegPose().getX()) : angle;
+                return (relative) ? (int) Math.toDegrees(this.as.getLeftLegPose().getX()) : angle;
 
-            } else if(part == BodyPart.RIGHTARM) {
+            } else if (part == BodyPart.RIGHTARM) {
                 this.as.setRightArmPose(getEulerAngleFromInput(axis, this.as.getRightArmPose(), angle, relative));
-                return (relative) ?(int) Math.toDegrees(this.as.getRightArmPose().getX()) : angle;
+                return (relative) ? (int) Math.toDegrees(this.as.getRightArmPose().getX()) : angle;
 
-            } else if(part == BodyPart.RIGHTLEG) {
+            } else if (part == BodyPart.RIGHTLEG) {
                 this.as.setRightLegPose(getEulerAngleFromInput(axis, this.as.getRightLegPose(), angle, relative));
-                return (relative) ?(int) Math.toDegrees(this.as.getRightLegPose().getX()) : angle;
+                return (relative) ? (int) Math.toDegrees(this.as.getRightLegPose().getX()) : angle;
             }
             return angle;
         } catch (NullPointerException e) {
@@ -76,17 +76,17 @@ public class ArmorStandPoser {
     }
 
     private EulerAngle getEulerAngleFromInput(Axis axis, EulerAngle ea, int angle, boolean relative) {
-        switch(axis) {
+        switch (axis) {
             case PITCH:
                 double x = Math.toRadians(angle);
-                if(relative)
+                if (relative)
                     x += ea.getX();
-                return  ea.setX(x);
+                return ea.setX(x);
             case YAW:
                 double y = Math.toRadians(angle);
-                if(relative)
+                if (relative)
                     y += ea.getY();
-                return  ea.setY(y);
+                return ea.setY(y);
             case ROLL:
                 double z = Math.toRadians(angle);
                 if (relative)
@@ -96,8 +96,8 @@ public class ArmorStandPoser {
         return null;
     }
 
-    public int[] setEulerAngle(BodyPart part, int[] angles, boolean[] relatives) throws IllegalArgumentException{
-        if(angles.length >= 3 && relatives.length >= 3) {
+    public int[] setEulerAngle(BodyPart part, int[] angles, boolean[] relatives) throws IllegalArgumentException {
+        if (angles.length >= 3 && relatives.length >= 3) {
             boolean relative = relatives[0] && relatives[1] && relatives[2];
             EulerAngle ea;
             switch (part) {
@@ -140,13 +140,13 @@ public class ArmorStandPoser {
     }
 
     private EulerAngle getNewEulerAngle(EulerAngle ea, int[] angles, boolean[] relatives) {
-        if(angles.length >= 3 && relatives.length >= 3) {
+        if (angles.length >= 3 && relatives.length >= 3) {
             ea = new EulerAngle(
-                            (relatives[0]) ? Math.toRadians(angles[0]) + ea.getX() : Math.toRadians(angles[0]),
-                            (relatives[1]) ? Math.toRadians(angles[1]) + ea.getY() : Math.toRadians(angles[1]),
-                            (relatives[2]) ? Math.toRadians(angles[2]) + ea.getZ() : Math.toRadians(angles[2])
-                    );
-                    return ea;
+                    (relatives[0]) ? Math.toRadians(angles[0]) + ea.getX() : Math.toRadians(angles[0]),
+                    (relatives[1]) ? Math.toRadians(angles[1]) + ea.getY() : Math.toRadians(angles[1]),
+                    (relatives[2]) ? Math.toRadians(angles[2]) + ea.getZ() : Math.toRadians(angles[2])
+            );
+            return ea;
         } else {
             throw new IllegalArgumentException("Please input 3 angles!");
         }
@@ -156,7 +156,7 @@ public class ArmorStandPoser {
     public boolean translatePlayerLook(BodyPart part, Location location) {
         Vector v = location.getDirection();
         EulerAngle ea = new EulerAngle(v.getX(), v.getY(), v.getZ());
-        switch(part) {
+        switch (part) {
             case HEAD:
                 this.as.setHeadPose(ea);
                 return true;

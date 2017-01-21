@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * EditArmorStands - Plugin to edit armor stand poses and options
  * Copyright (C) 2015 Max Lee (https://github.com/Phoenix616/)
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,7 +17,7 @@ import java.util.Arrays;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  */
- 
+
 public enum BodyPart {
     HEAD    (new String[]{"h"}),
     BODY    (new String[]{"b"}),
@@ -29,7 +29,7 @@ public enum BodyPart {
     private String[] alias;
 
     private static String valuestring = Arrays.toString(BodyPart.values());
-    
+
     BodyPart(String[] alias) {
         this.alias = alias;
     }
@@ -40,9 +40,9 @@ public enum BodyPart {
         try {
             return valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
-            for(BodyPart p : values())
-                for(String a : p.alias)
-                    if(a.equalsIgnoreCase(name))
+            for (BodyPart p : values())
+                for (String a : p.alias)
+                    if (a.equalsIgnoreCase(name))
                         return p;
         }
         throw new IllegalArgumentException(name + " is not a body part! Available parts are " + valuestring.toLowerCase().substring(1, valuestring.length() - 1));

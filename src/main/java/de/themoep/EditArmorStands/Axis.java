@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * EditArmorStands - Plugin to edit armor stand poses and options
  * Copyright (C) 2015 Max Lee (https://github.com/Phoenix616/)
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,7 +17,7 @@ import java.util.Arrays;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  */
- 
+
 public enum Axis {
     YAW     (new String[]{"y, heading, h"}),
     PITCH   (new String[]{"p, elevation, e"}),
@@ -26,7 +26,7 @@ public enum Axis {
     private String[] alias;
 
     private static String valuestring = Arrays.toString(Axis.values());
-    
+
     Axis(String[] alias) {
         this.alias = alias;
     }
@@ -37,9 +37,9 @@ public enum Axis {
         try {
             return valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
-            for(Axis x : values())
-                for(String a : x.alias)
-                    if(a.equalsIgnoreCase(name))
+            for (Axis x : values())
+                for (String a : x.alias)
+                    if (a.equalsIgnoreCase(name))
                         return x;
         }
         throw new IllegalArgumentException(name + " is not an axis! Available axis are " + valuestring.toLowerCase().substring(1, valuestring.length() - 1));
