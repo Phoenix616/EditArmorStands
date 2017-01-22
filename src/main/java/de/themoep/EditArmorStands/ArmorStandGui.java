@@ -25,7 +25,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -52,7 +54,7 @@ public class ArmorStandGui implements Listener {
     /**
      * All the materials that can be put on the head in Vanilla
      */
-    private final static List<Material> HELMETS = Arrays.asList(
+    private final static Set<Material> HELMETS = new HashSet<>(Arrays.asList(
             Material.LEATHER_HELMET,
             Material.IRON_HELMET,
             Material.GOLD_HELMET,
@@ -60,40 +62,40 @@ public class ArmorStandGui implements Listener {
             Material.CHAINMAIL_HELMET,
             Material.SKULL_ITEM,
             Material.PUMPKIN
-    );
+    ));
 
     /**
      * All the materials that can be put on the chest in Vanilla
      */
-    private final static List<Material> CHESTPLATES = Arrays.asList(
+    private final static Set<Material> CHESTPLATES = new HashSet<>(Arrays.asList(
             Material.LEATHER_CHESTPLATE,
             Material.IRON_CHESTPLATE,
             Material.GOLD_CHESTPLATE,
             Material.DIAMOND_CHESTPLATE,
             Material.CHAINMAIL_CHESTPLATE
-    );
+    ));
 
     /**
      * All the materials that can be put on the legs in Vanilla
      */
-    private final static List<Material> PANTS = Arrays.asList(
+    private final static Set<Material> PANTS = new HashSet<>(Arrays.asList(
             Material.LEATHER_LEGGINGS,
             Material.IRON_LEGGINGS,
             Material.GOLD_LEGGINGS,
             Material.DIAMOND_LEGGINGS,
             Material.CHAINMAIL_LEGGINGS
-    );
+    ));
 
     /**
      * All the materials that can be put on the feet in Vanilla
      */
-    private final static List<Material> BOOTS = Arrays.asList(
+    private final static Set<Material> BOOTS = new HashSet<>(Arrays.asList(
             Material.LEATHER_BOOTS,
             Material.IRON_BOOTS,
             Material.GOLD_BOOTS,
             Material.DIAMOND_BOOTS,
             Material.CHAINMAIL_BOOTS
-    );
+    ));
 
     /**
      * All the slots that make up the armor stand's armor in the GUI
