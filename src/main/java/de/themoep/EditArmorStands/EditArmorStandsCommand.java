@@ -147,7 +147,7 @@ public class EditArmorStandsCommand implements CommandExecutor {
                 }
 
                 UUID asid = plugin.getSelection(p);
-                if (asid == null) {
+                if (asid != null) {
                     ArmorStand as = null;
                     for (Entity e : p.getNearbyEntities(64, 64, 64))
                         if (e.getType() == EntityType.ARMOR_STAND && e.getUniqueId() == asid) {
