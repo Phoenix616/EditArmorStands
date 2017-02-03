@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  */
 
-public class EditArmorStands extends JavaPlugin implements CommandExecutor {
+public class EditArmorStands extends JavaPlugin {
 
     private Map<UUID, UUID> selectedArmorStands = new HashMap<>();
 

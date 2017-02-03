@@ -56,6 +56,7 @@ public class EditArmorStandsCommand implements CommandExecutor {
                 }
                 plugin.disablePersistent(p);
                 plugin.removeWaitingAction(p);
+                plugin.removeSelection(p);
             } else if (args[0].equalsIgnoreCase("usage") || args[0].equalsIgnoreCase("help")) {
                 List<String> usage = new ArrayList<String>();
 
