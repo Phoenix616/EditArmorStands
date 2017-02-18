@@ -59,7 +59,7 @@ public class ArmorStandListener implements Listener {
                 return;
             }
 
-            if (plugin.isPersistent(event.getPlayer())) {
+            if (plugin.getPersistentAction(event.getPlayer()) != null) {
                 event.setCancelled(true);
                 plugin.calculateAction(event.getPlayer(), armorStand, plugin.getPersistentAction(event.getPlayer()));
                 return;

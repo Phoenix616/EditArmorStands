@@ -360,7 +360,7 @@ public class EditArmorStands extends JavaPlugin {
      * Check if a player is in persistent mode
      */
     public boolean isPersistent(Player player) {
-        return getPersistentAction(player) != null;
+        return persistent.containsKey(player.getUniqueId());
     }
 
     /**
