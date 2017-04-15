@@ -207,7 +207,7 @@ public class EditArmorStandsCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to edit!");
                     plugin.setPersistentAction(p, args);
                 } else {
-                    sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
+                    sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to " + args[0].toLowerCase() + " in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
                     plugin.addWaitingAction(p, args);
                 }
             }
