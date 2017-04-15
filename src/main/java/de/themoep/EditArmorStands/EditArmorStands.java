@@ -121,42 +121,42 @@ public class EditArmorStands extends JavaPlugin {
 
             if ("info".equalsIgnoreCase(args[0])) {
                 List<String> info = new ArrayList<>();
-                info.add(ChatColor.GREEN + "--- Info about the Armor Stand" + (as.getCustomName() != null ? ChatColor.YELLOW + " " + as.getCustomName() : "") + " --- ");
-                info.add(ChatColor.GREEN + "Position: " + ChatColor.YELLOW + as.getLocation().getX() + " " + as.getLocation().getY() + " " + as.getLocation().getZ());
-                info.add(ChatColor.GREEN + "Rotation: " + ChatColor.YELLOW + as.getLocation().getYaw());
-                info.add(ChatColor.GREEN + "Head:");
-                info.add(ChatColor.GREEN + "  Yaw: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getHeadPose())
-                        + ChatColor.GREEN + " Pitch: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getHeadPose())
-                        + ChatColor.GREEN + " Roll: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getHeadPose()));
-                info.add(ChatColor.GREEN + "Body:");
-                info.add(ChatColor.GREEN + "  Yaw: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getBodyPose())
-                        + ChatColor.GREEN + " Pitch: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getBodyPose())
-                        + ChatColor.GREEN + " Roll: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getBodyPose()));
-                info.add(ChatColor.GREEN + "Left arm:");
-                info.add(ChatColor.GREEN + "  Yaw: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getLeftArmPose())
-                        + ChatColor.GREEN + " Pitch: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getLeftArmPose())
-                        + ChatColor.GREEN + " Roll: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getLeftArmPose()));
-                info.add(ChatColor.GREEN + "Right arm:");
-                info.add(ChatColor.GREEN + "  Yaw: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getRightArmPose())
-                        + ChatColor.GREEN + " Pitch: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getRightArmPose())
-                        + ChatColor.GREEN + " Roll: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getRightArmPose()));
-                info.add(ChatColor.GREEN + "Left leg:");
-                info.add(ChatColor.GREEN + "  Yaw: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getLeftLegPose())
-                        + ChatColor.GREEN + " Pitch: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getLeftLegPose())
-                        + ChatColor.GREEN + " Roll: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getLeftLegPose()));
-                info.add(ChatColor.GREEN + "Right leg:");
-                info.add(ChatColor.GREEN + "  Yaw: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getRightLegPose())
-                        + ChatColor.GREEN + " Pitch: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getRightLegPose())
-                        + ChatColor.GREEN + " Roll: " + ChatColor.YELLOW + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getRightLegPose()));
-                info.add(ChatColor.GREEN + "Name visible: " + ChatColor.YELLOW + as.isCustomNameVisible());
-                info.add(ChatColor.GREEN + "Visible: " + ChatColor.YELLOW + as.isVisible());
-                info.add(ChatColor.GREEN + "Gravity: " + ChatColor.YELLOW + as.hasGravity());
-                info.add(ChatColor.GREEN + "Glowing: " + ChatColor.YELLOW + as.isGlowing());
-                info.add(ChatColor.GREEN + "Invulnerable: " + ChatColor.YELLOW + as.isInvulnerable());
-                info.add(ChatColor.GREEN + "Arms: " + ChatColor.YELLOW + as.hasArms());
-                info.add(ChatColor.GREEN + "Base: " + ChatColor.YELLOW + as.hasBasePlate());
-                info.add(ChatColor.GREEN + "Small: " + ChatColor.YELLOW + as.isSmall());
-                info.add(ChatColor.GREEN + "Marker: " + ChatColor.YELLOW + as.isMarker());
+                info.add(ChatColor.YELLOW + "--- Info about the Armor Stand" + (as.getCustomName() != null ? ChatColor.RESET + " " + as.getCustomName() : "") + " --- ");
+                info.add(ChatColor.YELLOW + "Position: " + ChatColor.RESET + as.getLocation().getX() + " " + as.getLocation().getY() + " " + as.getLocation().getZ());
+                info.add(ChatColor.YELLOW + "Rotation: " + ChatColor.RESET + as.getLocation().getYaw());
+                info.add(ChatColor.YELLOW + "Head:");
+                info.add(ChatColor.YELLOW + "  Yaw: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getHeadPose())
+                        + ChatColor.YELLOW + " Pitch: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getHeadPose())
+                        + ChatColor.YELLOW + " Roll: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getHeadPose()));
+                info.add(ChatColor.YELLOW + "Body:");
+                info.add(ChatColor.YELLOW + "  Yaw: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getBodyPose())
+                        + ChatColor.YELLOW + " Pitch: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getBodyPose())
+                        + ChatColor.YELLOW + " Roll: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getBodyPose()));
+                info.add(ChatColor.YELLOW + "Left arm:");
+                info.add(ChatColor.YELLOW + "  Yaw: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getLeftArmPose())
+                        + ChatColor.YELLOW + " Pitch: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getLeftArmPose())
+                        + ChatColor.YELLOW + " Roll: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getLeftArmPose()));
+                info.add(ChatColor.YELLOW + "Right arm:");
+                info.add(ChatColor.YELLOW + "  Yaw: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getRightArmPose())
+                        + ChatColor.YELLOW + " Pitch: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getRightArmPose())
+                        + ChatColor.YELLOW + " Roll: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getRightArmPose()));
+                info.add(ChatColor.YELLOW + "Left leg:");
+                info.add(ChatColor.YELLOW + "  Yaw: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getLeftLegPose())
+                        + ChatColor.YELLOW + " Pitch: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getLeftLegPose())
+                        + ChatColor.YELLOW + " Roll: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getLeftLegPose()));
+                info.add(ChatColor.YELLOW + "Right leg:");
+                info.add(ChatColor.YELLOW + "  Yaw: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.YAW, as.getRightLegPose())
+                        + ChatColor.YELLOW + " Pitch: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.PITCH, as.getRightLegPose())
+                        + ChatColor.YELLOW + " Roll: " + ChatColor.RESET + ArmorStandPoser.getDegreeAngleFromEuler(Axis.ROLL, as.getRightLegPose()));
+                info.add(ChatColor.YELLOW + "Name visible: " + (as.isCustomNameVisible() ? ChatColor.GREEN : ChatColor.RED) + as.isCustomNameVisible());
+                info.add(ChatColor.YELLOW + "Visible: " + (as.isVisible() ? ChatColor.GREEN : ChatColor.RED) + as.isVisible());
+                info.add(ChatColor.YELLOW + "Gravity: " + (as.hasGravity() ? ChatColor.GREEN : ChatColor.RED) + as.hasGravity());
+                info.add(ChatColor.YELLOW + "Glowing: " + (as.isGlowing() ? ChatColor.GREEN : ChatColor.RED) + as.isGlowing());
+                info.add(ChatColor.YELLOW + "Invulnerable: " + (as.isInvulnerable() ? ChatColor.GREEN : ChatColor.RED) + as.isInvulnerable());
+                info.add(ChatColor.YELLOW + "Arms: " + (as.hasArms() ? ChatColor.GREEN : ChatColor.RED) + as.hasArms());
+                info.add(ChatColor.YELLOW + "Base: " + (as.hasBasePlate() ? ChatColor.GREEN : ChatColor.RED) + as.hasBasePlate());
+                info.add(ChatColor.YELLOW + "Small: " + (as.isSmall() ? ChatColor.GREEN : ChatColor.RED) + as.isSmall());
+                info.add(ChatColor.YELLOW + "Marker: " + (as.isMarker() ? ChatColor.GREEN : ChatColor.RED) + as.isMarker());
 
                 for (String i : info) {
                     player.sendMessage(i);
