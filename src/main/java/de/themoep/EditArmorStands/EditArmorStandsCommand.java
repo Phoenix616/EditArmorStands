@@ -104,16 +104,15 @@ public class EditArmorStandsCommand implements CommandExecutor {
                     if (sender.hasPermission("editarmorstands.command.paste.name")) {
                         params.add("name");
                     }
-                    StringBuilder paramStr = new StringBuilder();
+                    String paramStr = "";
                     if (params.size() > 1) {
-                        paramStr.append("[");
                         for (String param : params) {
-                            if (!param.isEmpty()) {
-                                paramStr.append("|");
+                            if (!paramStr.isEmpty()) {
+                                paramStr += "&r|";
                             }
-                            paramStr.append(param);
+                            paramStr += "&e" + param;
                         }
-                        paramStr.append("]");
+                        paramStr = "&r[" + paramStr + "&r]";
                     }
                     usage.add("&e/eas paste " + paramStr.toString());
                     usage.add("&r - Paste " + (params.size() == 1 ? params.get(0) : "data") + " after copying");
@@ -127,7 +126,7 @@ public class EditArmorStandsCommand implements CommandExecutor {
                     }
                 }
                 if (toggles.length() > 0) {
-                    usage.add("&e/eas &r[" + toggles + "&r]");
+                    usage.add("&e/eas " + toggles);
                     usage.add("&r - Toggle the option");
                 }
                 if (sender.hasPermission("editarmorstands.command.pose")) {
