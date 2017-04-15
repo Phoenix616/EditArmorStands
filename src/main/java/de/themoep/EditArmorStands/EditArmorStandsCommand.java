@@ -11,7 +11,10 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /*
@@ -33,7 +36,8 @@ import java.util.UUID;
 public class EditArmorStandsCommand implements CommandExecutor {
     private final EditArmorStands plugin;
 
-    private final static List<String> TOGGLE_OPTIONS = Arrays.asList("namevisible", "gravity", "visible", "base", "arms", "size");
+    private final static Set<String> TOGGLE_OPTIONS = new LinkedHashSet<>(Arrays.asList("namevisible", "gravity", "visible", "glowing", "invulnerable", "marker", "base", "arms", "size"));
+    private final static Set<String> SUB_COMMANDS = new HashSet<>(Arrays.asList("name", "move", "mv", "items", "inv", "i", "copy", "cp", "paste", "info"));
 
     public EditArmorStandsCommand(EditArmorStands plugin) {
         this.plugin = plugin;
@@ -46,7 +50,7 @@ public class EditArmorStandsCommand implements CommandExecutor {
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
                 plugin.addWaitingAction(p, args);
-            } else if (args[0].equalsIgnoreCase("exit")) {
+            } else if ("exit".equalsIgnoreCase(args[0])) {
                 if (plugin.isPersistent(p)) {
                     sender.sendMessage(ChatColor.GREEN + "Disabled persistent mode!");
                 } else if (plugin.hasWaitingAction(p)) {
@@ -57,8 +61,8 @@ public class EditArmorStandsCommand implements CommandExecutor {
                 plugin.disablePersistent(p);
                 plugin.removeWaitingAction(p);
                 plugin.removeSelection(p);
-            } else if (args[0].equalsIgnoreCase("usage") || args[0].equalsIgnoreCase("help")) {
-                List<String> usage = new ArrayList<String>();
+            } else if ("usage".equalsIgnoreCase(args[0]) || "help".equalsIgnoreCase(args[0])) {
+                List<String> usage = new ArrayList<>();
 
                 usage.add("--- &6EditArmorStands v" + plugin.getDescription().getVersion() + " Usage:&r ---");
 
@@ -68,6 +72,10 @@ public class EditArmorStandsCommand implements CommandExecutor {
                 usage.add("&r - Apply options via click without rerunning the command");
                 usage.add("&e/eas exit");
                 usage.add("&r - Exit the editing/persist mode");
+                if (sender.hasPermission("editarmorstands.command.info")) {
+                    usage.add("&e/eas info");
+                    usage.add("&r - Get some info about an Armor Stand");
+                }
                 if (sender.hasPermission("editarmorstands.command.items")) {
                     usage.add("&e/eas items");
                     usage.add("&r - Show a gui to manipulate the items/armor");
@@ -79,6 +87,36 @@ public class EditArmorStandsCommand implements CommandExecutor {
                 if (sender.hasPermission("editarmorstands.command.move")) {
                     usage.add("&e/eas move <x> <y> <z>");
                     usage.add("&r - Move an Armor Stand, use ~ for relatives");
+                }
+                if (sender.hasPermission("editarmorstands.command.copy") && sender.hasPermission("editarmorstands.command.paste")) {
+                    usage.add("&e/eas copy");
+                    usage.add("&r - Copy data of an Armor Stand");
+                    List<String> params = new ArrayList<>();
+                    if (sender.hasPermission("editarmorstands.command.paste.items")) {
+                        params.add("items");
+                    }
+                    if (sender.hasPermission("editarmorstands.command.paste.pose")) {
+                        params.add("pose");
+                    }
+                    if (sender.hasPermission("editarmorstands.command.paste.settings")) {
+                        params.add("settings");
+                    }
+                    if (sender.hasPermission("editarmorstands.command.paste.name")) {
+                        params.add("name");
+                    }
+                    StringBuilder paramStr = new StringBuilder();
+                    if (params.size() > 1) {
+                        paramStr.append("[");
+                        for (String param : params) {
+                            if (!param.isEmpty()) {
+                                paramStr.append("|");
+                            }
+                            paramStr.append(param);
+                        }
+                        paramStr.append("]");
+                    }
+                    usage.add("&e/eas paste " + paramStr.toString());
+                    usage.add("&r - Paste " + (params.size() == 1 ? params.get(0) : "data") + " after copying");
                 }
                 String toggles = "";
                 for (String s : TOGGLE_OPTIONS) {
@@ -104,7 +142,7 @@ public class EditArmorStandsCommand implements CommandExecutor {
 
                 for (String s : usage)
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
-            } else if (args[0].equalsIgnoreCase("persist")) {
+            } else if ("persist".equalsIgnoreCase(args[0])) {
                 plugin.enablePersistent(p);
                 sender.sendMessage(ChatColor.GREEN + "Enabled persistent mode. Disable via " + ChatColor.YELLOW + "/eas exit");
             } else {
@@ -119,7 +157,7 @@ public class EditArmorStandsCommand implements CommandExecutor {
                         return true;
                     }
                 } catch (IllegalArgumentException e) {
-                    if (args[0].equalsIgnoreCase("y") || args[0].equalsIgnoreCase("yaw") || args[0].equalsIgnoreCase("r") || args[0].equalsIgnoreCase("rotate") || args[0].equalsIgnoreCase("rotation")) {
+                    if ("y".equalsIgnoreCase(args[0]) || "yaw".equalsIgnoreCase(args[0]) || "r".equalsIgnoreCase(args[0]) || "rotate".equalsIgnoreCase(args[0]) || "rotation".equalsIgnoreCase(args[0])) {
                         if (!sender.hasPermission("editarmorstands.command.pose")) {
                             sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
                             return true;
@@ -127,17 +165,24 @@ public class EditArmorStandsCommand implements CommandExecutor {
                             sender.sendMessage(ChatColor.RED + "Usage: /eas " + args[0].toLowerCase() + " <degree>");
                             return true;
                         }
-                    } else if (args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("move") || args[0].equalsIgnoreCase("mv") || args[0].equalsIgnoreCase("items") || args[0].equalsIgnoreCase("inv") || args[0].equalsIgnoreCase("i") || TOGGLE_OPTIONS.contains(args[0].toLowerCase())) {
-                        if (args[0].equalsIgnoreCase("mv")) {
+                        args[0] = "rotate";
+                    } else if (SUB_COMMANDS.contains(args[0].toLowerCase()) || TOGGLE_OPTIONS.contains(args[0].toLowerCase())) {
+                        if ("mv".equalsIgnoreCase(args[0])) {
                             args[0] = "move";
-                        } else if (args[0].equalsIgnoreCase("inv") || args[0].equalsIgnoreCase("i")) {
+                        } else if ("inv".equalsIgnoreCase(args[0]) || "i".equalsIgnoreCase(args[0])) {
                             args[0] = "items";
+                        } else if ("cp".equalsIgnoreCase(args[0])) {
+                            args[0] = "copy";
                         }
                         if (!sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
                             sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
                             return true;
-                        } else if (args[0].equalsIgnoreCase("move") && args.length < 4) {
+                        } else if ("move".equalsIgnoreCase(args[0]) && args.length < 4) {
                             sender.sendMessage(ChatColor.RED + "Usage: /eas move <x> <y> <z>");
+                            return true;
+                        }
+                        if ("paste".equalsIgnoreCase(args[0]) && plugin.getClipboard(((Player) sender).getUniqueId()) == null) {
+                            sender.sendMessage(ChatColor.RED + "You don't have a copy in your clipboard?");
                             return true;
                         }
                     } else {

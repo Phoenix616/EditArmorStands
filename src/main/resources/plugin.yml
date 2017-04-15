@@ -11,6 +11,12 @@ commands:
               - Rightclick an ArmorStand in the next 10s to select it
              /<command> exit
               - Exit the editing mode
+             /<command> info
+              - Show some info about the armor stand
+             /<command> copy
+              - Copy ArmorStand data
+             /<command> paste
+              - Paste ArmorStand data
              /<command> items
               - Show a gui to manipulate the items/armor
              /<command> name <name>
@@ -23,7 +29,7 @@ commands:
               - Set an angle, use ~ for relatives
              /<command> <bodypart> <pitch> <yaw> <roll>
               - Set all angles of a body part at once, use ~ for relatives
-             Bodyparts: head, body, leftarm, rightarm, leftleg, rightleg. 
+             Bodyparts: head, body, leftarm, rightarm, leftleg, rightleg.
              (r, y, p, h, ra, ll etc. are possible!)
       permissions: editarmorstands.command
 permissions:
@@ -37,8 +43,14 @@ permissions:
       description: A collection of permissions a normal user should have.
       children:
          editarmorstands.command: true
+         editarmorstands.command.info: true
+         editarmorstands.command.copy: true
+         editarmorstands.command.paste: true
+         editarmorstands.command.paste.pose: true
+         editarmorstands.command.paste.data: true
          editarmorstands.command.items: true
          editarmorstands.command.gravity: true
+         editarmorstands.command.glowing: true
          editarmorstands.command.base: true
          editarmorstands.command.arms: true
          editarmorstands.command.size: true
@@ -52,6 +64,13 @@ permissions:
       description: Gives access to all EditArmorStands commands
       children:
          editarmorstands.command: true
+         editarmorstands.command.info: true
+         editarmorstands.command.copy: true
+         editarmorstands.command.paste: true
+         editarmorstands.command.paste.pose: true
+         editarmorstands.command.paste.settings: true
+         editarmorstands.command.paste.name: true
+         editarmorstands.command.paste.items: true
          editarmorstands.command.items: true
          editarmorstands.command.name: true
          editarmorstands.command.name.colored: true
@@ -59,6 +78,9 @@ permissions:
          editarmorstands.command.vulnerable: true
          editarmorstands.command.gravity: true
          editarmorstands.command.visible: true
+         editarmorstands.command.glowing: true
+         editarmorstands.command.invulnerable: true
+         editarmorstands.command.marker: true
          editarmorstands.command.base: true
          editarmorstands.command.arms: true
          editarmorstands.command.size: true
@@ -72,8 +94,26 @@ permissions:
          editarmorstands.nametag.name: true
          editarmorstands.nametag.name.colored: true
          editarmorstands.nametag.name.clear: true
-   editarmorstands.command.items:
-      description: Allows a player to show a gui to modify the armostand's inventory
+   editarmorstands.command.info:
+      description: Allows a player to show a some info about an armostand
+      default: op
+   editarmorstands.command.copy:
+      description: Allows a player to copy armorstand data
+      default: op
+   editarmorstands.command.paste:
+      description: Allows a player to paste armorstand data
+      default: op
+   editarmorstands.command.paste.items:
+      description: Allows a player to paste items onto an armorstand
+      default: op
+   editarmorstands.command.paste.pose:
+      description: Allows a player to paste the pose onto an armorstand
+      default: op
+   editarmorstands.command.paste.name:
+      description: Allows a player to paste the custom name onto an armorstand
+      default: op
+   editarmorstands.command.paste.settings:
+      description: Allows a player to paste the settings onto an armorstand
       default: op
    editarmorstands.place.name:
       description: Allows a player to name an armor stand by placing a named item
@@ -98,6 +138,15 @@ permissions:
       default: op
    editarmorstands.command.visible:
       description: Allows a player to make an armorstand visible/invisible
+      default: op
+   editarmorstands.command.glowing:
+      description: Allows a player to make an armorstand glowing/non glowing
+      default: op
+   editarmorstands.command.invulnerable:
+      description: Allows a player to make an armorstand invulnarable
+      default: op
+   editarmorstands.command.marker:
+      description: Allows a player to make an armorstand a marker
       default: op
    editarmorstands.command.base:
       description: Allows a player to make an armorstands base visible/invisible

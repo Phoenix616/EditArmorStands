@@ -33,7 +33,7 @@ public class ArmorStandPoser {
         try {
             if (part == BodyPart.HEAD) {
                 EulerAngle ea = this.as.getHeadPose();
-                this.as.setHeadPose(getEulerAngleFromInput(axis, ea, angle, relative));
+                this.as.setHeadPose(getEulerAngleFromDegree(axis, ea, angle, relative));
                 if (relative) {
                     double rad = 0;
                     switch (axis) {
@@ -50,23 +50,23 @@ public class ArmorStandPoser {
                     return (int) Math.toDegrees(rad);
                 }
             } else if (part == BodyPart.BODY) {
-                this.as.setBodyPose(getEulerAngleFromInput(axis, this.as.getBodyPose(), angle, relative));
+                this.as.setBodyPose(getEulerAngleFromDegree(axis, this.as.getBodyPose(), angle, relative));
                 return (relative) ? (int) Math.toDegrees(this.as.getBodyPose().getX()) : angle;
 
             } else if (part == BodyPart.LEFTARM) {
-                this.as.setLeftArmPose(getEulerAngleFromInput(axis, this.as.getLeftArmPose(), angle, relative));
+                this.as.setLeftArmPose(getEulerAngleFromDegree(axis, this.as.getLeftArmPose(), angle, relative));
                 return (relative) ? (int) Math.toDegrees(this.as.getLeftArmPose().getX()) : angle;
 
             } else if (part == BodyPart.LEFTLEG) {
-                this.as.setLeftLegPose(getEulerAngleFromInput(axis, this.as.getLeftLegPose(), angle, relative));
+                this.as.setLeftLegPose(getEulerAngleFromDegree(axis, this.as.getLeftLegPose(), angle, relative));
                 return (relative) ? (int) Math.toDegrees(this.as.getLeftLegPose().getX()) : angle;
 
             } else if (part == BodyPart.RIGHTARM) {
-                this.as.setRightArmPose(getEulerAngleFromInput(axis, this.as.getRightArmPose(), angle, relative));
+                this.as.setRightArmPose(getEulerAngleFromDegree(axis, this.as.getRightArmPose(), angle, relative));
                 return (relative) ? (int) Math.toDegrees(this.as.getRightArmPose().getX()) : angle;
 
             } else if (part == BodyPart.RIGHTLEG) {
-                this.as.setRightLegPose(getEulerAngleFromInput(axis, this.as.getRightLegPose(), angle, relative));
+                this.as.setRightLegPose(getEulerAngleFromDegree(axis, this.as.getRightLegPose(), angle, relative));
                 return (relative) ? (int) Math.toDegrees(this.as.getRightLegPose().getX()) : angle;
             }
             return angle;
@@ -75,7 +75,7 @@ public class ArmorStandPoser {
         }
     }
 
-    private EulerAngle getEulerAngleFromInput(Axis axis, EulerAngle ea, int angle, boolean relative) {
+    public static EulerAngle getEulerAngleFromDegree(Axis axis, EulerAngle ea, int angle, boolean relative) {
         switch (axis) {
             case PITCH:
                 double x = Math.toRadians(angle);
@@ -94,6 +94,18 @@ public class ArmorStandPoser {
                 return ea.setZ(z);
         }
         return null;
+    }
+
+    public static double getDegreeAngleFromEuler(Axis axis, EulerAngle ea) {
+        switch (axis) {
+            case PITCH:
+                return Math.toDegrees(ea.getX());
+            case YAW:
+                return Math.toDegrees(ea.getY());
+            case ROLL:
+                return Math.toDegrees(ea.getZ());
+        }
+        return 0;
     }
 
     public int[] setEulerAngle(BodyPart part, int[] angles, boolean[] relatives) throws IllegalArgumentException {
