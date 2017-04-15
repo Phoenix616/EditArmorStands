@@ -96,14 +96,20 @@ public class ArmorStandPoser {
         return null;
     }
 
+    /**
+     * Get the angle in degrees from an EulerAngle
+     * @param axis  The axis to get the degree from
+     * @param ea    The EulerAngle
+     * @return      The angle in degrees rounded to two decimal places
+     */
     public static double getDegreeAngleFromEuler(Axis axis, EulerAngle ea) {
         switch (axis) {
             case PITCH:
-                return Math.toDegrees(ea.getX());
+                return Math.round(Math.toDegrees(ea.getX()) * 100) / 100;
             case YAW:
-                return Math.toDegrees(ea.getY());
+                return Math.round(Math.toDegrees(ea.getY()) * 100) / 100;
             case ROLL:
-                return Math.toDegrees(ea.getZ());
+                return Math.round(Math.toDegrees(ea.getZ()) * 100) / 100;
         }
         return 0;
     }
