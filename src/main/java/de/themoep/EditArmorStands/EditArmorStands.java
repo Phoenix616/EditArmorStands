@@ -11,14 +11,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /*
  * EditArmorStands - Plugin to edit armor stand poses and options
@@ -93,7 +96,7 @@ public class EditArmorStands extends JavaPlugin {
             player.sendMessage(ChatColor.GREEN + "Selected Armor Stand at " + ChatColor.YELLOW + as.getLocation().getBlockX() + "/" + as.getLocation().getBlockY() + "/" + as.getLocation().getBlockZ() + ChatColor.GREEN + "!");
             player.getPlayer().sendMessage(ChatColor.GREEN + "You can now use " + ChatColor.YELLOW + "/eas <option> <value> " + ChatColor.GREEN + "to edit the properties of this Armor Stand! To exit the editing mode run " + ChatColor.YELLOW + "/eas exit" + ChatColor.GREEN + "!");
             return true;
-        } else if (args.length > 0 && "name".equalsIgnoreCase(args[0])) {
+        } else if ("name".equalsIgnoreCase(args[0])) {
             if (player.hasPermission("editarmorstands.command.name")) {
                 if (args.length > 1) {
                     String name = "";
@@ -113,6 +116,28 @@ public class EditArmorStands extends JavaPlugin {
             } else {
                 player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.name");
             }
+        } else if ("paste".equalsIgnoreCase(args[0])) {
+            ArmorStandData data = getClipboard(player.getUniqueId());
+            if (data == null) {
+                player.sendMessage(ChatColor.RED + "You don't have a copy in your clipboard?");
+                return true;
+            }
+
+            Set<String> argSet = Arrays.stream(Arrays.copyOfRange(args, 1, args.length)).map(String::toLowerCase).collect(Collectors.toSet());
+            if (argSet.contains("items") && player.hasPermission("editarmorstands.command.paste.items")) {
+                data.applyItems(as);
+            }
+            if (argSet.contains("pose") && player.hasPermission("editarmorstands.command.paste.pose")) {
+                data.applyPose(as);
+            }
+            if (argSet.contains("settings") && player.hasPermission("editarmorstands.command.paste.settings")) {
+                data.applySettings(as);
+            }
+            if (argSet.contains("name") && player.hasPermission("editarmorstands.command.paste.name")) {
+                data.applyName(as);
+            }
+            player.sendMessage(ChatColor.GREEN + "Pasted clipboard data on Armor Stand!");
+            return true;
         } else if (args.length == 1) {
             if (!player.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
                 player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
@@ -166,29 +191,6 @@ public class EditArmorStands extends JavaPlugin {
                 clipboard.put(player.getUniqueId(), new ArmorStandData(as));
                 player.sendMessage(ChatColor.GREEN + "Armor Stand data copied! " + ChatColor.GRAY + "Your clipboard is cleared after ten minutes!");
                 return true;
-
-            } else if ("paste".equalsIgnoreCase(args[0])) {
-                ArmorStandData data = getClipboard(player.getUniqueId());
-                if (data == null) {
-                    player.sendMessage(ChatColor.RED + "You don't have a copy in your clipboard?");
-                    return true;
-                }
-
-                if (player.hasPermission("editarmorstands.command.paste.items")) {
-                    data.applyItems(as);
-                }
-                if (player.hasPermission("editarmorstands.command.paste.pose")) {
-                    data.applyPose(as);
-                }
-                if (player.hasPermission("editarmorstands.command.paste.settings")) {
-                    data.applySettings(as);
-                }
-                if (player.hasPermission("editarmorstands.command.paste.name")) {
-                    data.applyName(as);
-                }
-                player.sendMessage(ChatColor.GREEN + "Pasted clipboard data on Armor Stand!");
-                return true;
-
             } else if ("items".equalsIgnoreCase(args[0])) {
                 ArmorStandGui gui = new ArmorStandGui(this, as, player);
                 gui.show();

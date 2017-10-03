@@ -11,11 +11,11 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /*
  * EditArmorStands
@@ -37,7 +37,8 @@ public class EditArmorStandsCommand implements CommandExecutor {
     private final EditArmorStands plugin;
 
     private final static Set<String> TOGGLE_OPTIONS = new LinkedHashSet<>(Arrays.asList("namevisible", "gravity", "visible", "glowing", "invulnerable", "marker", "base", "arms", "size"));
-    private final static Set<String> SUB_COMMANDS = new HashSet<>(Arrays.asList("name", "move", "mv", "items", "inv", "i", "copy", "cp", "paste", "info"));
+    private final static Set<String> SUB_COMMANDS = new LinkedHashSet<>(Arrays.asList("name", "move", "mv", "items", "inv", "i", "copy", "cp", "paste", "info"));
+    private final static Set<String> PASTE_OPTIONS = new LinkedHashSet<>(Arrays.asList("items", "pose", "settings", "name"));
 
     public EditArmorStandsCommand(EditArmorStands plugin) {
         this.plugin = plugin;
@@ -91,31 +92,14 @@ public class EditArmorStandsCommand implements CommandExecutor {
                 if (sender.hasPermission("editarmorstands.command.copy") && sender.hasPermission("editarmorstands.command.paste")) {
                     usage.add("&e/eas copy");
                     usage.add("&r - Copy data of an Armor Stand");
-                    List<String> params = new ArrayList<>();
-                    if (sender.hasPermission("editarmorstands.command.paste.items")) {
-                        params.add("items");
+                    String paramStr = PASTE_OPTIONS.stream()
+                            .filter(s -> sender.hasPermission("editarmorstands.command.paste." + s))
+                            .collect(Collectors.joining("&r|&e"));
+                    if (!paramStr.isEmpty()) {
+                        paramStr = "&r[&e" + paramStr + "&r]";
                     }
-                    if (sender.hasPermission("editarmorstands.command.paste.pose")) {
-                        params.add("pose");
-                    }
-                    if (sender.hasPermission("editarmorstands.command.paste.settings")) {
-                        params.add("settings");
-                    }
-                    if (sender.hasPermission("editarmorstands.command.paste.name")) {
-                        params.add("name");
-                    }
-                    String paramStr = "";
-                    if (params.size() > 1) {
-                        for (String param : params) {
-                            if (!paramStr.isEmpty()) {
-                                paramStr += "&r|";
-                            }
-                            paramStr += "&e" + param;
-                        }
-                        paramStr = "&r[" + paramStr + "&r]";
-                    }
-                    usage.add("&e/eas paste " + paramStr.toString());
-                    usage.add("&r - Paste " + (params.size() == 1 ? params.get(0) : "data") + " after copying");
+                    usage.add("&e/eas paste " + paramStr);
+                    usage.add("&r - Paste to Armor Stand after copying");
                 }
                 String toggles = "";
                 for (String s : TOGGLE_OPTIONS) {
