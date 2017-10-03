@@ -164,9 +164,17 @@ public class EditArmorStandsCommand implements CommandExecutor {
                             sender.sendMessage(ChatColor.RED + "Usage: /eas move <x> <y> <z>");
                             return true;
                         }
-                        if ("paste".equalsIgnoreCase(args[0]) && plugin.getClipboard(((Player) sender).getUniqueId()) == null) {
-                            sender.sendMessage(ChatColor.RED + "You don't have a copy in your clipboard?");
-                            return true;
+                        if ("paste".equalsIgnoreCase(args[0])) {
+                            if (plugin.getClipboard(((Player) sender).getUniqueId()) == null) {
+                                sender.sendMessage(ChatColor.RED + "You don't have a copy in your clipboard?");
+                                return true;
+                            }
+                            for (int i = 1; i < args.length; i++) {
+                                if (!sender.hasPermission("editarmorstands.command.paste." + args[i].toLowerCase())) {
+                                    sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.paste" + args[i].toLowerCase());
+                                    return true;
+                                }
+                            }
                         }
                     } else {
                         sender.sendMessage(ChatColor.RED + "The argument " + ChatColor.YELLOW + args[0].toLowerCase() + ChatColor.RED + " doesn't exist. Use " + ChatColor.YELLOW + "/eas help" + ChatColor.RED + " to get all available toggleOptions!");
