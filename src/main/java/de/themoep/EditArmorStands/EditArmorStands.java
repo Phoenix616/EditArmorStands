@@ -124,16 +124,16 @@ public class EditArmorStands extends JavaPlugin {
             }
 
             Set<String> argSet = Arrays.stream(Arrays.copyOfRange(args, 1, args.length)).map(String::toLowerCase).collect(Collectors.toSet());
-            if (argSet.contains("items") && player.hasPermission("editarmorstands.command.paste.items")) {
+            if ((argSet.isEmpty() || argSet.contains("items")) && player.hasPermission("editarmorstands.command.paste.items")) {
                 data.applyItems(as);
             }
-            if (argSet.contains("pose") && player.hasPermission("editarmorstands.command.paste.pose")) {
+            if ((argSet.isEmpty() || argSet.contains("pose")) && player.hasPermission("editarmorstands.command.paste.pose")) {
                 data.applyPose(as);
             }
-            if (argSet.contains("settings") && player.hasPermission("editarmorstands.command.paste.settings")) {
+            if ((argSet.isEmpty() || argSet.contains("settings")) && player.hasPermission("editarmorstands.command.paste.settings")) {
                 data.applySettings(as);
             }
-            if (argSet.contains("name") && player.hasPermission("editarmorstands.command.paste.name")) {
+            if ((argSet.isEmpty() || argSet.contains("name")) && player.hasPermission("editarmorstands.command.paste.name")) {
                 data.applyName(as);
             }
             player.sendMessage(ChatColor.GREEN + "Pasted clipboard data on Armor Stand!");
