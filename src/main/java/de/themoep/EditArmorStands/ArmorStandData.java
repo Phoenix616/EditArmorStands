@@ -47,6 +47,9 @@ public class ArmorStandData {
     private final ItemStack leggings;
     private final ItemStack boots;
 
+    private final ItemStack mainHand;
+    private final ItemStack offHand;
+
     public ArmorStandData(ArmorStand armorStand) {
         this.headPose = armorStand.getHeadPose();
         this.bodyPose = armorStand.getBodyPose();
@@ -72,6 +75,9 @@ public class ArmorStandData {
         this.chest = armorStand.getChestplate();
         this.leggings = armorStand.getLeggings();
         this.boots = armorStand.getBoots();
+
+        this.mainHand = armorStand.getEquipment().getItemInMainHand();
+        this.offHand = armorStand.getEquipment().getItemInOffHand();
     }
 
     public EulerAngle getHeadPose() {
@@ -158,6 +164,14 @@ public class ArmorStandData {
         return boots;
     }
 
+    public ItemStack getMainHand() {
+        return mainHand;
+    }
+
+    public ItemStack getOffHand() {
+        return offHand;
+    }
+
     public void applyPose(ArmorStand as) {
         as.setHeadPose(getHeadPose());
         as.setBodyPose(getBodyPose());
@@ -191,5 +205,7 @@ public class ArmorStandData {
         as.setChestplate(getChest());
         as.setLeggings(getLeggings());
         as.setBoots(getBoots());
+        as.getEquipment().setItemInMainHand(getMainHand());
+        as.getEquipment().setItemInOffHand(getOffHand());
     }
 }
