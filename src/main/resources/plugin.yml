@@ -1,6 +1,7 @@
 name: EditArmorStands
 main: de.themoep.EditArmorStands.EditArmorStands
 version: '${minecraft.plugin.version}'
+api-version: '1.13'
 description: ${project.description}
 commands:
    editarmorstand:      

@@ -57,10 +57,16 @@ public class ArmorStandGui implements Listener {
     private final static Set<Material> HELMETS = new HashSet<>(Arrays.asList(
             Material.LEATHER_HELMET,
             Material.IRON_HELMET,
-            Material.GOLD_HELMET,
+            Material.GOLDEN_HELMET,
             Material.DIAMOND_HELMET,
             Material.CHAINMAIL_HELMET,
-            Material.SKULL_ITEM,
+            Material.TURTLE_HELMET,
+            Material.CREEPER_HEAD,
+            Material.DRAGON_HEAD,
+            Material.PLAYER_HEAD,
+            Material.ZOMBIE_HEAD,
+            Material.SKELETON_SKULL,
+            Material.WITHER_SKELETON_SKULL,
             Material.PUMPKIN
     ));
 
@@ -70,9 +76,10 @@ public class ArmorStandGui implements Listener {
     private final static Set<Material> CHESTPLATES = new HashSet<>(Arrays.asList(
             Material.LEATHER_CHESTPLATE,
             Material.IRON_CHESTPLATE,
-            Material.GOLD_CHESTPLATE,
+            Material.GOLDEN_CHESTPLATE,
             Material.DIAMOND_CHESTPLATE,
-            Material.CHAINMAIL_CHESTPLATE
+            Material.CHAINMAIL_CHESTPLATE,
+            Material.ELYTRA
     ));
 
     /**
@@ -81,7 +88,7 @@ public class ArmorStandGui implements Listener {
     private final static Set<Material> PANTS = new HashSet<>(Arrays.asList(
             Material.LEATHER_LEGGINGS,
             Material.IRON_LEGGINGS,
-            Material.GOLD_LEGGINGS,
+            Material.GOLDEN_LEGGINGS,
             Material.DIAMOND_LEGGINGS,
             Material.CHAINMAIL_LEGGINGS
     ));
@@ -92,7 +99,7 @@ public class ArmorStandGui implements Listener {
     private final static Set<Material> BOOTS = new HashSet<>(Arrays.asList(
             Material.LEATHER_BOOTS,
             Material.IRON_BOOTS,
-            Material.GOLD_BOOTS,
+            Material.GOLDEN_BOOTS,
             Material.DIAMOND_BOOTS,
             Material.CHAINMAIL_BOOTS
     ));
@@ -122,11 +129,7 @@ public class ArmorStandGui implements Listener {
         this.armorStand = armorStand;
         this.player = player;
 
-        if (plugin.getServerVersion() > 11100) {
-            CHESTPLATES.add(Material.ELYTRA);
-        }
-
-        filler = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15);
+        filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta fim = filler.getItemMeta();
         fim.setDisplayName(ChatColor.BLACK + "X");
         filler.setItemMeta(fim);
@@ -250,9 +253,7 @@ public class ArmorStandGui implements Listener {
                     List<Integer> slots = new ArrayList<>(SLOTS_ARMORS);
                     slots.addAll(SLOTS_PLAYER);
                     slots.add(12);
-                    if (plugin.getServerVersion() >= 10900) {
-                        slots.add(14);
-                    }
+                    slots.add(14);
                     for (int i : slots) {
                         ItemStack target = event.getWhoClicked().getOpenInventory().getTopInventory().getItem(i);
                         if ((target == null || target.getType() == Material.AIR) && isValidItem(i, event.getCurrentItem())) {
@@ -274,8 +275,7 @@ public class ArmorStandGui implements Listener {
      * Check if an item is bound to the player
      */
     private boolean isBound(int slot) {
-        if (plugin.getServerVersion() >= 11100 // Curse of binding was added in 1.11
-                && player.getGameMode() != GameMode.CREATIVE // Players in creative mode can remove the item
+        if (player.getGameMode() != GameMode.CREATIVE // Players in creative mode can remove the item
                 && SLOTS_PLAYER.contains(slot)) { // Check if the slot is a player armor slot
             ItemStack item = getSlotItem(slot);
             return item != null && item.containsEnchantment(Enchantment.BINDING_CURSE); // Check for the enchantment
@@ -309,9 +309,6 @@ public class ArmorStandGui implements Listener {
                     armorStand.setChestplate(item);
                     break;
                 case 14:
-                    if (plugin.getServerVersion() < 10900) {
-                        return false;
-                    }
                     armorStand.getEquipment().setItemInOffHand(item);
                     break;
                 case 22:
@@ -349,13 +346,6 @@ public class ArmorStandGui implements Listener {
             case 13:
                 return armorStand.getChestplate();
             case 14:
-                if (plugin.getServerVersion() < 10900) {
-                    ItemStack leftArm = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
-                    ItemMeta laim = leftArm.getItemMeta();
-                    laim.setDisplayName(ChatColor.RED + "The offhand item cannot be set in 1.8!");
-                    leftArm.setItemMeta(laim);
-                    return leftArm;
-                }
                 return armorStand.getEquipment().getItemInOffHand();
             case 22:
                 return armorStand.getLeggings();
@@ -458,9 +448,8 @@ public class ArmorStandGui implements Listener {
             case 7:
                 return empty || HELMETS.contains(itemStack.getType());
             case 12:
-                return true;
             case 14:
-                return plugin.getServerVersion() >= 10900;
+                return true;
             case 13:
             case 16:
                 return empty || CHESTPLATES.contains(itemStack.getType());

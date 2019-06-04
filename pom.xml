@@ -24,7 +24,8 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.11.2-R0.1-SNAPSHOT</version>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -38,7 +39,7 @@
             </activation>
             <properties>
                 <buildNumber>0</buildNumber>
-                <buildDescription>(manually compiled)</buildDescription>
+                <buildDescription>(compiled at ${maven.build.timestamp})</buildDescription>
             </properties>
         </profile>
         <profile>
@@ -50,7 +51,7 @@
             </activation>
             <properties>
                 <buildNumber>${env.BUILD_NUMBER}</buildNumber>
-                <buildDescription>(build #${env.BUILD_NUMBER})</buildDescription>
+                <buildDescription>(build ${env.BUILD_NUMBER})</buildDescription>
             </properties>
         </profile>
     </profiles>

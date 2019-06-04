@@ -51,43 +51,9 @@ public class EditArmorStands extends JavaPlugin {
 
     private static DecimalFormat df = new DecimalFormat("#.##");
 
-    private int serverVersion = 0;
-
     public void onEnable() {
-        Matcher versionMatcher = Pattern.compile(".*\\(MC: (.*)\\)").matcher(getServer().getVersion());
-        if (versionMatcher.find()) {
-            String[] version = versionMatcher.group(1).split("[.]");
-            for (int i = 0; i < version.length && i < 3; i++) {
-                try {
-                    int n = Integer.parseInt(version[i]);
-                    serverVersion += n * Math.pow(100, 2 - i);
-                } catch (NumberFormatException e) {
-                    getLogger().warning("Could not parse " + version[i] + " as an integer?");
-                }
-            }
-        }
-
-        if (serverVersion != 0) {
-            getLogger().info("Detect server " + serverVersion);
-            if (serverVersion < 10800) {
-                getLogger().warning("Armor Stands weren't in Minecraft before 1.8? What are you trying to do with this plugin?");
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
-        } else {
-            getLogger().warning("Could not detect server version!");
-        }
-
         getServer().getPluginManager().registerEvents(new ArmorStandListener(this), this);
         getCommand("editarmorstand").setExecutor(new EditArmorStandsCommand(this));
-    }
-
-    /**
-     * Get the server version in the format MajorMinorPatch
-     * E.g. 1.8.2 would end up being 10802 and 1.11.2 11102
-     */
-    public int getServerVersion() {
-        return serverVersion;
     }
 
     boolean calculateAction(Player player, ArmorStand as, String[] args) {
