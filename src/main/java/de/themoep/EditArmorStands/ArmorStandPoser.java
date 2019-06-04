@@ -29,7 +29,7 @@ public class ArmorStandPoser {
         this.as = as;
     }
 
-    public int setSingleAngle(BodyPart part, Axis axis, int angle, boolean relative) {
+    public double setSingleAngle(BodyPart part, Axis axis, double angle, boolean relative) {
         try {
             if (part == BodyPart.HEAD) {
                 EulerAngle ea = this.as.getHeadPose();
@@ -51,23 +51,23 @@ public class ArmorStandPoser {
                 }
             } else if (part == BodyPart.BODY) {
                 this.as.setBodyPose(getEulerAngleFromDegree(axis, this.as.getBodyPose(), angle, relative));
-                return (relative) ? (int) Math.toDegrees(this.as.getBodyPose().getX()) : angle;
+                return (relative) ? Math.toDegrees(this.as.getBodyPose().getX()) : angle;
 
             } else if (part == BodyPart.LEFTARM) {
                 this.as.setLeftArmPose(getEulerAngleFromDegree(axis, this.as.getLeftArmPose(), angle, relative));
-                return (relative) ? (int) Math.toDegrees(this.as.getLeftArmPose().getX()) : angle;
+                return (relative) ? Math.toDegrees(this.as.getLeftArmPose().getX()) : angle;
 
             } else if (part == BodyPart.LEFTLEG) {
                 this.as.setLeftLegPose(getEulerAngleFromDegree(axis, this.as.getLeftLegPose(), angle, relative));
-                return (relative) ? (int) Math.toDegrees(this.as.getLeftLegPose().getX()) : angle;
+                return (relative) ? Math.toDegrees(this.as.getLeftLegPose().getX()) : angle;
 
             } else if (part == BodyPart.RIGHTARM) {
                 this.as.setRightArmPose(getEulerAngleFromDegree(axis, this.as.getRightArmPose(), angle, relative));
-                return (relative) ? (int) Math.toDegrees(this.as.getRightArmPose().getX()) : angle;
+                return (relative) ? Math.toDegrees(this.as.getRightArmPose().getX()) : angle;
 
             } else if (part == BodyPart.RIGHTLEG) {
                 this.as.setRightLegPose(getEulerAngleFromDegree(axis, this.as.getRightLegPose(), angle, relative));
-                return (relative) ? (int) Math.toDegrees(this.as.getRightLegPose().getX()) : angle;
+                return (relative) ? Math.toDegrees(this.as.getRightLegPose().getX()) : angle;
             }
             return angle;
         } catch (NullPointerException e) {
@@ -75,7 +75,7 @@ public class ArmorStandPoser {
         }
     }
 
-    public static EulerAngle getEulerAngleFromDegree(Axis axis, EulerAngle ea, int angle, boolean relative) {
+    public static EulerAngle getEulerAngleFromDegree(Axis axis, EulerAngle ea, double angle, boolean relative) {
         switch (axis) {
             case PITCH:
                 double x = Math.toRadians(angle);
@@ -93,7 +93,7 @@ public class ArmorStandPoser {
                     z += ea.getZ();
                 return ea.setZ(z);
         }
-        return null;
+        return new EulerAngle(0, 0, 0);
     }
 
     /**

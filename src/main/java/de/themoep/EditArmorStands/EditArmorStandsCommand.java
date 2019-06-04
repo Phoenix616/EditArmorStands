@@ -214,9 +214,10 @@ public class EditArmorStandsCommand implements TabExecutor {
         if (!(sender instanceof Player)) {
             return null;
         }
+        boolean hasSpace = args.length > 0 && args[args.length - 1].isEmpty();
         List<String> completions = new ArrayList<>();
         boolean canPose = sender.hasPermission("editarmorstands.command.pose");
-        if (args.length < 2) {
+        if (args.length == 1) {
             completions.addAll(SUB_COMMANDS);
             completions.addAll(TOGGLE_OPTIONS);
             completions.removeAll(Arrays.asList("mv", "inv", "i", "cp"));
@@ -229,57 +230,34 @@ public class EditArmorStandsCommand implements TabExecutor {
                 Arrays.stream(BodyPart.values()).map(part -> part.name().toLowerCase()).forEachOrdered(completions::add);
                 Collections.addAll(completions, "rotate", "yaw", "pitch");
             }
-        }
-        if (args.length == 1) {
-            completions.removeIf(s -> args[0].length() >= s.length() || !s.startsWith(args[0].toLowerCase()));
-            if (canPose && completions.isEmpty()) {
-                if ("rotate".equalsIgnoreCase(args[0]) || "yaw".equalsIgnoreCase(args[0])) {
-                    completions.add(String.valueOf(((Player) sender).getLocation().getYaw()));
-                } else if ("pitch".equalsIgnoreCase(args[0])) {
-                    completions.add(String.valueOf(((Player) sender).getLocation().getPitch()));
-                } else {
-                    try {
-                        BodyPart.fromString(args[0]);
-                        Arrays.stream(Axis.values()).map(axis -> axis.name().toLowerCase()).forEachOrdered(completions::add);
-                        completions.add(String.valueOf(((Player) sender).getLocation().getPitch()));
-                    } catch (IllegalArgumentException ignored) {}
-                }
-            }
         } else if (args.length == 2) {
             if (canPose) {
                 try {
                     BodyPart.fromString(args[0]);
-                    try {
-                        Axis axis = Axis.fromString(args[1]);
-                        switch (axis) {
-                            case PITCH:
-                                completions.add(String.valueOf(((Player) sender).getLocation().getPitch()));
-                                break;
-                            case YAW:
-                                completions.add(String.valueOf(((Player) sender).getLocation().getYaw()));
-                                break;
-                        }
-                    } catch (IllegalArgumentException e) {
-                        Arrays.stream(Axis.values())
-                                .map(axis -> axis.name().toLowerCase())
-                                .filter(a -> args[1].length() >= a.length() && a.startsWith(args[1].toLowerCase()))
-                                .forEachOrdered(completions::add);
-                        if (completions.isEmpty()) {
-                            completions.add(String.valueOf(((Player) sender).getLocation().getYaw()));
-                        }
-                    }
+                    Arrays.stream(Axis.values())
+                            .map(axis -> axis.name().toLowerCase())
+                            .forEachOrdered(completions::add);
                 } catch (IllegalArgumentException ignored) {}
             }
         } else if (args.length == 3) {
             try {
                 BodyPart.fromString(args[0]);
                 try {
-                    Axis.fromString(args[1]);
+                    Axis axis = Axis.fromString(args[1]);
+                    switch (axis) {
+                        case PITCH:
+                            completions.add(String.valueOf(((Player) sender).getLocation().getPitch()));
+                            break;
+                        case YAW:
+                            completions.add(String.valueOf(((Player) sender).getLocation().getYaw()));
+                            break;
+                    }
                 } catch (IllegalArgumentException e) {
                     completions.add(String.valueOf(((Player) sender).getLocation().getPitch()));
                 }
             } catch (IllegalArgumentException ignored) {}
         }
+        completions.removeIf(s -> args.length > 0 && !s.startsWith(args[args.length - 1].toLowerCase()));
         return completions;
     }
 }

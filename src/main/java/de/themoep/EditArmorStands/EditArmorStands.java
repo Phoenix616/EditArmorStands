@@ -251,7 +251,7 @@ public class EditArmorStands extends JavaPlugin {
         } else if (args.length == 3) {
             if (player.hasPermission("editarmorstands.command.pose")) {
                 try {
-                    int angle;
+                    double angle;
                     boolean relative = false;
 
                     if (args[2].startsWith("~")) {
@@ -259,23 +259,23 @@ public class EditArmorStands extends JavaPlugin {
                         if (args[2].length() == 1) {
                             angle = 0;
                         } else {
-                            angle = Integer.parseInt(args[2].substring(1));
+                            angle = Double.parseDouble(args[2].substring(1));
                         }
                     } else {
-                        angle = Integer.parseInt(args[2]);
+                        angle = Double.parseDouble(args[2]);
                     }
                     try {
                         ArmorStandPoser asp = new ArmorStandPoser(as);
                         BodyPart bp = BodyPart.fromString(args[0]);
                         Axis a = Axis.fromString(args[1]);
-                        int n = asp.setSingleAngle(bp, a, angle, relative);
+                        double n = asp.setSingleAngle(bp, a, angle, relative);
                         player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s " + a.name().toLowerCase() + " to " + ChatColor.YELLOW + n + ChatColor.GREEN + "!");
                         return true;
                     } catch (IllegalArgumentException e) {
                         player.sendMessage(ChatColor.RED + e.getMessage());
                     }
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Your third argument " + args[1] + " is not a number!");
+                    player.sendMessage(ChatColor.RED + "Your third argument " + args[2] + " is not a number!");
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
