@@ -19,15 +19,15 @@ import java.util.Arrays;
  */
 
 public enum Axis {
-    YAW     (new String[]{"y, heading, h"}),
-    PITCH   (new String[]{"p, elevation, e"}),
-    ROLL    (new String[]{"r, bank, b"});
+    YAW     ("y, heading, h"),
+    PITCH   ("p, elevation, e"),
+    ROLL    ("r, bank, b");
 
     private String[] alias;
 
     private static String valuestring = Arrays.toString(Axis.values());
 
-    Axis(String[] alias) {
+    Axis(String... alias) {
         this.alias = alias;
     }
 

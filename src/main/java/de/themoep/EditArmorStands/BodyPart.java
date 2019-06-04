@@ -19,18 +19,18 @@ import java.util.Arrays;
  */
 
 public enum BodyPart {
-    HEAD    (new String[]{"h"}),
-    BODY    (new String[]{"b"}),
-    LEFTARM (new String[]{"la"}),
-    RIGHTARM(new String[]{"ra"}),
-    LEFTLEG (new String[]{"ll"}),
-    RIGHTLEG(new String[]{"rl"});
+    HEAD    ("h"),
+    BODY    ("b"),
+    LEFTARM ("la"),
+    RIGHTARM("ra"),
+    LEFTLEG ("ll"),
+    RIGHTLEG("rl");
 
     private String[] alias;
 
     private static String valuestring = Arrays.toString(BodyPart.values());
 
-    BodyPart(String[] alias) {
+    BodyPart(String... alias) {
         this.alias = alias;
     }
 
