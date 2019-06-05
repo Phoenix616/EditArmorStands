@@ -8,6 +8,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,11 +136,12 @@ public class EditArmorStandsCommand implements TabExecutor {
                     if (!sender.hasPermission("editarmorstands.command.pose")) {
                         sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
                         return true;
-                    } else if (args.length < 2) {
-                        sender.sendMessage(ChatColor.RED + "Usage: /eas " + args[0].toLowerCase() + " [pitch|yaw|roll] <degree>");
-                        sender.sendMessage(ChatColor.RED + "Or /eas " + args[0].toLowerCase() + " <pitch> <yaw> <roll>");
-                        return true;
                     }
+                    Vector direction = ((Player) sender).getEyeLocation().getDirection();
+                    args = new String[]{
+                            args[0],
+                            "vector:" + direction.getX() + ":" + direction.getY() + ":" + direction.getZ()
+                    };
                 } catch (IllegalArgumentException e) {
                     if ("y".equalsIgnoreCase(args[0]) || "yaw".equalsIgnoreCase(args[0]) || "r".equalsIgnoreCase(args[0]) || "rotate".equalsIgnoreCase(args[0]) || "rotation".equalsIgnoreCase(args[0])) {
                         if (!sender.hasPermission("editarmorstands.command.pose")) {
@@ -178,7 +180,7 @@ public class EditArmorStandsCommand implements TabExecutor {
                             }
                         }
                     } else {
-                        sender.sendMessage(ChatColor.RED + "The argument " + ChatColor.YELLOW + args[0].toLowerCase() + ChatColor.RED + " doesn't exist. Use " + ChatColor.YELLOW + "/eas help" + ChatColor.RED + " to get all available toggleOptions!");
+                        sender.sendMessage(ChatColor.RED + "The argument " + ChatColor.YELLOW + args[0].toLowerCase() + ChatColor.RED + " doesn't exist. Use " + ChatColor.YELLOW + "/eas help" + ChatColor.RED + " to get all available options!");
                         return true;
                     }
                 }

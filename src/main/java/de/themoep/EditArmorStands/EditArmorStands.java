@@ -8,6 +8,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -19,8 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /*
@@ -197,18 +196,33 @@ public class EditArmorStands extends JavaPlugin {
                 as.setMarker(!as.isMarker());
                 player.sendMessage(ChatColor.GREEN + "Armor Stand is " + ChatColor.YELLOW + (as.isMarker() ? "now" : "no longer") + " a marker" + ChatColor.GREEN + "!");
                 return true;
-            /* TODO: Find out why this isn't working!
-            } else if(sender.hasPermission("editarmorstands.command.pose")) {
-                ArmorStandPoser asp = new ArmorStandPoser(as);
-                if(asp.translatePlayerLook(args[0], p.getEyeLocation())) {
-                    sender.sendMessage(ChatColor.GREEN + "Set " + args[0] + " rotation to your head's view!");
+            } else if (player.hasPermission("editarmorstands.command.pose")) {
+                try {
+                    BodyPart bp = BodyPart.fromString(args[0]);
+                    new ArmorStandPoser(as).setDirection(bp, player.getEyeLocation().getDirection());
+                    player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s direction to your head's view!");
                     return true;
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Sorry but the option " + args[0] + " doesn't exist!");
-                };*/
+                } catch (IllegalArgumentException e) {
+                    player.sendMessage(ChatColor.RED + e.getMessage());
+                }
             }
         } else if (args.length == 2) {
             if (player.hasPermission("editarmorstands.command.pose")) {
+                try {
+                    String[] parts = args[1].split(":");
+                    if (parts.length == 4 && "vector".equalsIgnoreCase(parts[0])) {
+                        BodyPart bp = BodyPart.fromString(args[0]);
+                        new ArmorStandPoser(as).setDirection(bp, new Vector(
+                                Double.parseDouble(parts[1]),
+                                Double.parseDouble(parts[2]),
+                                Double.parseDouble(parts[3])
+                        ));
+                        player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s direction to your head's view!");
+                        return true;
+                    }
+                } catch (IllegalArgumentException e) {
+                    player.sendMessage(ChatColor.RED + e.getMessage());
+                }
                 try {
                     int angle;
                     boolean relative = false;
@@ -265,10 +279,9 @@ public class EditArmorStands extends JavaPlugin {
                         angle = Double.parseDouble(args[2]);
                     }
                     try {
-                        ArmorStandPoser asp = new ArmorStandPoser(as);
                         BodyPart bp = BodyPart.fromString(args[0]);
                         Axis a = Axis.fromString(args[1]);
-                        double n = asp.setSingleAngle(bp, a, angle, relative);
+                        double n = new ArmorStandPoser(as).setSingleAngle(bp, a, angle, relative);
                         player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s " + a.name().toLowerCase() + " to " + ChatColor.YELLOW + n + ChatColor.GREEN + "!");
                         return true;
                     } catch (IllegalArgumentException e) {
@@ -317,7 +330,6 @@ public class EditArmorStands extends JavaPlugin {
                     player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.move");
                 }
             } else if (player.hasPermission("editarmorstands.command.pose")) {
-                ArmorStandPoser asp = new ArmorStandPoser(as);
                 try {
                     int x;
                     int y;
@@ -355,7 +367,7 @@ public class EditArmorStands extends JavaPlugin {
 
                     try {
                         BodyPart bp = BodyPart.fromString(args[0]);
-                        int[] r = asp.setEulerAngle(bp, new int[]{x, y, z}, new boolean[]{rx, ry, rz});
+                        int[] r = new ArmorStandPoser(as).setEulerAngle(bp, new int[]{x, y, z}, new boolean[]{rx, ry, rz});
                         player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + ChatColor.YELLOW + r[0] + " " + r[1] + " " + r[2] + ChatColor.GREEN + "!");
                         return true;
                     } catch (IllegalArgumentException e) {

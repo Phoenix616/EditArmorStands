@@ -1,6 +1,12 @@
 package de.themoep.EditArmorStands;
 
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.util.EulerAngle;
+
 import java.util.Arrays;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * EditArmorStands - Plugin to edit armor stand poses and options
@@ -19,16 +25,28 @@ import java.util.Arrays;
  */
 
 public enum Axis {
-    YAW     ("y, heading, h"),
-    PITCH   ("p, elevation, e"),
-    ROLL    ("r, bank, b");
+    YAW(EulerAngle::getY, EulerAngle::setY, "y, heading, h"),
+    PITCH(EulerAngle::getX, EulerAngle::setX, "p, elevation, e"),
+    ROLL(EulerAngle::getZ, EulerAngle::setZ, "r, bank, b");
 
+    private final Function<EulerAngle, Double> getter;
+    private final BiFunction<EulerAngle, Double, EulerAngle> setter;
     private String[] alias;
 
     private static String valuestring = Arrays.toString(Axis.values());
 
-    Axis(String... alias) {
+    Axis(Function<EulerAngle, Double> getter, BiFunction<EulerAngle, Double, EulerAngle> setter, String... alias) {
+        this.getter = getter;
+        this.setter = setter;
         this.alias = alias;
+    }
+
+    public double getValue(EulerAngle angle) {
+        return getter.apply(angle);
+    }
+
+    public EulerAngle setValue(EulerAngle angle, double value) {
+        return setter.apply(angle, value);
     }
 
     public static Axis fromString(String name) throws IllegalArgumentException {

@@ -1,6 +1,11 @@
 package de.themoep.EditArmorStands;
 
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.util.EulerAngle;
+
 import java.util.Arrays;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * EditArmorStands - Plugin to edit armor stand poses and options
@@ -19,19 +24,31 @@ import java.util.Arrays;
  */
 
 public enum BodyPart {
-    HEAD    ("h"),
-    BODY    ("b"),
-    LEFTARM ("la"),
-    RIGHTARM("ra"),
-    LEFTLEG ("ll"),
-    RIGHTLEG("rl");
+    HEAD(ArmorStand::getHeadPose, ArmorStand::setHeadPose, "h"),
+    BODY(ArmorStand::getBodyPose, ArmorStand::setBodyPose, "b"),
+    LEFTARM(ArmorStand::getLeftArmPose, ArmorStand::setLeftArmPose, "la"),
+    RIGHTARM(ArmorStand::getRightArmPose, ArmorStand::setRightArmPose, "ra"),
+    LEFTLEG(ArmorStand::getLeftLegPose, ArmorStand::setLeftLegPose, "ll"),
+    RIGHTLEG(ArmorStand::getRightLegPose, ArmorStand::setRightLegPose, "rl");
 
+    private final Function<ArmorStand, EulerAngle> getter;
+    private final BiConsumer<ArmorStand, EulerAngle> setter;
     private String[] alias;
 
     private static String valuestring = Arrays.toString(BodyPart.values());
 
-    BodyPart(String... alias) {
+    BodyPart(Function<ArmorStand, EulerAngle> getter, BiConsumer<ArmorStand, EulerAngle> setter, String... alias) {
+        this.getter = getter;
+        this.setter = setter;
         this.alias = alias;
+    }
+
+    public EulerAngle getPose(ArmorStand stand) {
+        return getter.apply(stand);
+    }
+
+    public void setPose(ArmorStand stand, EulerAngle angle) {
+        setter.accept(stand, angle);
     }
 
     public static BodyPart fromString(String name) throws IllegalArgumentException {
