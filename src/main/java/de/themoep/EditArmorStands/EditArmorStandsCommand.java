@@ -118,6 +118,8 @@ public class EditArmorStandsCommand implements TabExecutor {
                 if (sender.hasPermission("editarmorstands.command.pose")) {
                     usage.add("&e/eas rotate <degree>");
                     usage.add("&r - Rotate the whole Armor Stand");
+                    usage.add("&e/eas <bodypart>");
+                    usage.add("&r - Set a direction of bodypart to your head directions");
                     usage.add("&e/eas <bodypart> &r[&epitch&r|&eyaw&r|&eroll&r] &e<degree>");
                     usage.add("&r - Set an angle, use ~ for relatives");
                     usage.add("&e/eas <bodypart> <pitch> <yaw> <roll>");

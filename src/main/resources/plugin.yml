@@ -26,6 +26,8 @@ commands:
               - Move the ArmorStand, use ~ for relatives
              /<command> [namevisible|gravity|visible|base|arms|size]
               - Toggle the option
+             /<command> <bodypart>
+              - Set a direction of bodypart to your head direction
              /<command> <bodypart> [pitch|yaw|roll] <degree>
               - Set an angle, use ~ for relatives
              /<command> <bodypart> <pitch> <yaw> <roll>
