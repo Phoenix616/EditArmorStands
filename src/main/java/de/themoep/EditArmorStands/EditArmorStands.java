@@ -241,16 +241,26 @@ public class EditArmorStands extends JavaPlugin {
                         Location l = as.getLocation();
                         if (relative)
                             angle += l.getPitch();
-                        l.setPitch(angle);
-                        as.teleport(l);
+                        try {
+                            as.setRotation(l.getYaw(), angle);
+                        } catch (NoSuchMethodError e) {
+                            // Thrown if setRotation doesn't exist yet/anymore
+                            l.setPitch(angle);
+                            as.teleport(l);
+                        }
                         player.sendMessage(ChatColor.GREEN + "Set Armor Stand's pitch to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
                         return true;
                     } else if ("rotate".equalsIgnoreCase(args[0])) {
                         Location l = as.getLocation();
                         if (relative)
                             angle += l.getYaw();
-                        l.setYaw(angle);
-                        as.teleport(l);
+                        try {
+                            as.setRotation(angle, l.getPitch());
+                        } catch (NoSuchMethodError e) {
+                            // Thrown if setRotation doesn't exist yet/anymore
+                            l.setYaw(angle);
+                            as.teleport(l);
+                        }
                         player.sendMessage(ChatColor.GREEN + "Set Armor Stand's rotation to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
                         return true;
                     } else {
