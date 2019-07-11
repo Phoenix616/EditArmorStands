@@ -139,11 +139,13 @@ public class EditArmorStandsCommand implements TabExecutor {
                         sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
                         return true;
                     }
-                    Vector direction = ((Player) sender).getEyeLocation().getDirection();
-                    args = new String[]{
-                            args[0],
-                            "vector:" + direction.getX() + ":" + direction.getY() + ":" + direction.getZ()
-                    };
+                    if (args.length == 1) {
+                        Vector direction = ((Player) sender).getEyeLocation().getDirection();
+                        args = new String[]{
+                                args[0],
+                                "vector:" + direction.getX() + ":" + direction.getY() + ":" + direction.getZ()
+                        };
+                    }
                 } catch (IllegalArgumentException e) {
                     if ("y".equalsIgnoreCase(args[0]) || "yaw".equalsIgnoreCase(args[0]) || "r".equalsIgnoreCase(args[0]) || "rotate".equalsIgnoreCase(args[0]) || "rotation".equalsIgnoreCase(args[0])) {
                         if (!sender.hasPermission("editarmorstands.command.pose")) {
