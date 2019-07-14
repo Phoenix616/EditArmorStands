@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
@@ -55,57 +56,60 @@ public class EditArmorStands extends JavaPlugin {
         getCommand("editarmorstand").setExecutor(new EditArmorStandsCommand(this));
     }
 
-    boolean calculateAction(Player player, ArmorStand as, String[] args) {
+    boolean calculateAction(LivingEntity sender, ArmorStand as, String[] args) {
         if (args.length == 0) {
-            addSelection(player, as);
-            player.sendMessage(ChatColor.GREEN + "Selected Armor Stand at " + ChatColor.YELLOW + as.getLocation().getBlockX() + "/" + as.getLocation().getBlockY() + "/" + as.getLocation().getBlockZ() + ChatColor.GREEN + "!");
-            player.getPlayer().sendMessage(ChatColor.GREEN + "You can now use " + ChatColor.YELLOW + "/eas <option> <value> " + ChatColor.GREEN + "to edit the properties of this Armor Stand! To exit the editing mode run " + ChatColor.YELLOW + "/eas exit" + ChatColor.GREEN + "!");
+            if (!(sender instanceof Player)) {
+                return false;
+            }
+            addSelection((Player) sender, as);
+            sender.sendMessage(ChatColor.GREEN + "Selected Armor Stand at " + ChatColor.YELLOW + as.getLocation().getBlockX() + "/" + as.getLocation().getBlockY() + "/" + as.getLocation().getBlockZ() + ChatColor.GREEN + "!");
+            sender.sendMessage(ChatColor.GREEN + "You can now use " + ChatColor.YELLOW + "/eas <option> <value> " + ChatColor.GREEN + "to edit the properties of this Armor Stand! To exit the editing mode run " + ChatColor.YELLOW + "/eas exit" + ChatColor.GREEN + "!");
             return true;
         } else if ("name".equalsIgnoreCase(args[0])) {
-            if (player.hasPermission("editarmorstands.command.name")) {
+            if (sender.hasPermission("editarmorstands.command.name")) {
                 if (args.length > 1) {
                     String name = "";
                     for (int i = 1; i < args.length; i++) {
                         name += args[i] + " ";
                     }
-                    if (player.hasPermission("editarmorstands.command.name.colored")) {
+                    if (sender.hasPermission("editarmorstands.command.name.colored")) {
                         name = ChatColor.translateAlternateColorCodes('&', name);
                     }
                     as.setCustomName(name.trim() + ChatColor.RESET);
-                    player.sendMessage(ChatColor.GREEN + "Set the Armor Stand's name to " + ChatColor.RESET + as.getCustomName() + ChatColor.GREEN + "!");
+                    sender.sendMessage(ChatColor.GREEN + "Set the Armor Stand's name to " + ChatColor.RESET + as.getCustomName() + ChatColor.GREEN + "!");
                 } else {
                     as.setCustomName(null);
-                    player.sendMessage(ChatColor.GREEN + "Removed the Armor Stand's name!");
+                    sender.sendMessage(ChatColor.GREEN + "Removed the Armor Stand's name!");
                 }
                 return true;
             } else {
-                player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.name");
+                sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.name");
             }
         } else if ("paste".equalsIgnoreCase(args[0])) {
-            ArmorStandData data = getClipboard(player.getUniqueId());
+            ArmorStandData data = getClipboard(sender.getUniqueId());
             if (data == null) {
-                player.sendMessage(ChatColor.RED + "You don't have a copy in your clipboard?");
+                sender.sendMessage(ChatColor.RED + "You don't have a copy in your clipboard?");
                 return true;
             }
 
             Set<String> argSet = Arrays.stream(Arrays.copyOfRange(args, 1, args.length)).map(String::toLowerCase).collect(Collectors.toSet());
-            if ((argSet.isEmpty() || argSet.contains("items")) && player.hasPermission("editarmorstands.command.paste.items")) {
+            if ((argSet.isEmpty() || argSet.contains("items")) && sender.hasPermission("editarmorstands.command.paste.items")) {
                 data.applyItems(as);
             }
-            if ((argSet.isEmpty() || argSet.contains("pose")) && player.hasPermission("editarmorstands.command.paste.pose")) {
+            if ((argSet.isEmpty() || argSet.contains("pose")) && sender.hasPermission("editarmorstands.command.paste.pose")) {
                 data.applyPose(as);
             }
-            if ((argSet.isEmpty() || argSet.contains("settings")) && player.hasPermission("editarmorstands.command.paste.settings")) {
+            if ((argSet.isEmpty() || argSet.contains("settings")) && sender.hasPermission("editarmorstands.command.paste.settings")) {
                 data.applySettings(as);
             }
-            if ((argSet.isEmpty() || argSet.contains("name")) && player.hasPermission("editarmorstands.command.paste.name")) {
+            if ((argSet.isEmpty() || argSet.contains("name")) && sender.hasPermission("editarmorstands.command.paste.name")) {
                 data.applyName(as);
             }
-            player.sendMessage(ChatColor.GREEN + "Pasted clipboard data on Armor Stand!");
+            sender.sendMessage(ChatColor.GREEN + "Pasted clipboard data on Armor Stand!");
             return true;
         } else if (args.length == 1) {
-            if (!player.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
-                player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
+            if (!sender.hasPermission("editarmorstands.command." + args[0].toLowerCase())) {
+                sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command." + args[0].toLowerCase());
                 return false;
             }
 
@@ -149,65 +153,65 @@ public class EditArmorStands extends JavaPlugin {
                 info.add(ChatColor.YELLOW + "Marker: " + (as.isMarker() ? ChatColor.GREEN : ChatColor.RED) + as.isMarker());
 
                 for (String i : info) {
-                    player.sendMessage(i);
+                    sender.sendMessage(i);
                 }
                 return true;
             } else if ("copy".equalsIgnoreCase(args[0])) {
-                clipboard.put(player.getUniqueId(), new ArmorStandData(as));
-                player.sendMessage(ChatColor.GREEN + "Armor Stand data copied! " + ChatColor.GRAY + "Your clipboard is cleared after ten minutes!");
+                clipboard.put(sender.getUniqueId(), new ArmorStandData(as));
+                sender.sendMessage(ChatColor.GREEN + "Armor Stand data copied! " + ChatColor.GRAY + "Your clipboard is cleared after ten minutes!");
                 return true;
-            } else if ("items".equalsIgnoreCase(args[0])) {
-                ArmorStandGui gui = new ArmorStandGui(this, as, player);
+            } else if ("items".equalsIgnoreCase(args[0]) && sender instanceof Player) {
+                ArmorStandGui gui = new ArmorStandGui(this, as, (Player) sender);
                 gui.show();
                 return true;
             } else if ("namevisible".equalsIgnoreCase(args[0])) {
                 as.setCustomNameVisible(!as.isCustomNameVisible());
-                player.sendMessage(ChatColor.GREEN + "The Armor Stand's name is now " + ChatColor.YELLOW + (as.isCustomNameVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "The Armor Stand's name is now " + ChatColor.YELLOW + (as.isCustomNameVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
                 return true;
             } else if ("arms".equalsIgnoreCase(args[0])) {
                 as.setArms(!as.hasArms());
-                player.sendMessage(ChatColor.GREEN + "Armor Stand has now " + ChatColor.YELLOW + (as.hasArms() ? "" : "no ") + "arms" + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "Armor Stand has now " + ChatColor.YELLOW + (as.hasArms() ? "" : "no ") + "arms" + ChatColor.GREEN + "!");
                 return true;
             } else if ("base".equalsIgnoreCase(args[0])) {
                 as.setBasePlate(!as.hasBasePlate());
-                player.sendMessage(ChatColor.GREEN + "Armor Stand has now " + ChatColor.YELLOW + (as.hasBasePlate() ? "a" : "no") + " baseplate" + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "Armor Stand has now " + ChatColor.YELLOW + (as.hasBasePlate() ? "a" : "no") + " baseplate" + ChatColor.GREEN + "!");
                 return true;
             } else if ("gravity".equalsIgnoreCase(args[0])) {
                 as.setGravity(!as.hasGravity());
-                player.sendMessage(ChatColor.GREEN + "Armor Stand has now " + ChatColor.YELLOW + (as.hasGravity() ? "" : "no ") + "gravity" + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "Armor Stand has now " + ChatColor.YELLOW + (as.hasGravity() ? "" : "no ") + "gravity" + ChatColor.GREEN + "!");
                 return true;
             } else if ("size".equalsIgnoreCase(args[0])) {
                 as.setSmall(!as.isSmall());
-                player.sendMessage(ChatColor.GREEN + "Armor Stand is now " + ChatColor.YELLOW + (as.isSmall() ? "small" : "big") + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "Armor Stand is now " + ChatColor.YELLOW + (as.isSmall() ? "small" : "big") + ChatColor.GREEN + "!");
                 return true;
             } else if ("visible".equalsIgnoreCase(args[0])) {
                 as.setVisible(!as.isVisible());
-                player.sendMessage(ChatColor.GREEN + "Armor Stand is now " + ChatColor.YELLOW + (as.isVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "Armor Stand is now " + ChatColor.YELLOW + (as.isVisible() ? "" : "in") + "visible" + ChatColor.GREEN + "!");
                 return true;
             } else if ("glowing".equalsIgnoreCase(args[0])) {
                 as.setGlowing(!as.isGlowing());
-                player.sendMessage(ChatColor.GREEN + "Armor Stand is " + ChatColor.YELLOW + (as.isGlowing() ? "now" : "no longer") + " glowing" + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "Armor Stand is " + ChatColor.YELLOW + (as.isGlowing() ? "now" : "no longer") + " glowing" + ChatColor.GREEN + "!");
                 return true;
             } else if ("invulnerable".equalsIgnoreCase(args[0])) {
                 as.setInvulnerable(!as.isInvulnerable());
-                player.sendMessage(ChatColor.GREEN + "Armor Stand is now " + ChatColor.YELLOW + (as.isInvulnerable() ? "in" : "") + "vulnerable" + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "Armor Stand is now " + ChatColor.YELLOW + (as.isInvulnerable() ? "in" : "") + "vulnerable" + ChatColor.GREEN + "!");
                 return true;
             } else if ("marker".equalsIgnoreCase(args[0])) {
                 as.setMarker(!as.isMarker());
-                player.sendMessage(ChatColor.GREEN + "Armor Stand is " + ChatColor.YELLOW + (as.isMarker() ? "now" : "no longer") + " a marker" + ChatColor.GREEN + "!");
+                sender.sendMessage(ChatColor.GREEN + "Armor Stand is " + ChatColor.YELLOW + (as.isMarker() ? "now" : "no longer") + " a marker" + ChatColor.GREEN + "!");
                 return true;
-            } else if (player.hasPermission("editarmorstands.command.pose")) {
+            } else if (sender.hasPermission("editarmorstands.command.pose")) {
                 try {
                     BodyPart bp = BodyPart.fromString(args[0]);
-                    new ArmorStandPoser(as).setDirection(bp, player.getEyeLocation().getDirection());
-                    player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s direction to your head's view!");
+                    new ArmorStandPoser(as).setDirection(bp, sender.getEyeLocation().getDirection());
+                    sender.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s direction to your head's view!");
                     return true;
                 } catch (IllegalArgumentException e) {
-                    player.sendMessage(ChatColor.RED + e.getMessage());
+                    sender.sendMessage(ChatColor.RED + e.getMessage());
                 }
             }
         } else if (args.length == 2) {
-            if (player.hasPermission("editarmorstands.command.pose")) {
+            if (sender.hasPermission("editarmorstands.command.pose")) {
                 try {
                     String[] parts = args[1].split(":");
                     if (parts.length == 4 && "vector".equalsIgnoreCase(parts[0])) {
@@ -217,11 +221,11 @@ public class EditArmorStands extends JavaPlugin {
                                 Double.parseDouble(parts[2]),
                                 Double.parseDouble(parts[3])
                         ));
-                        player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s direction to your head's view!");
+                        sender.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s direction to your head's view!");
                         return true;
                     }
                 } catch (IllegalArgumentException e) {
-                    player.sendMessage(ChatColor.RED + e.getMessage());
+                    sender.sendMessage(ChatColor.RED + e.getMessage());
                 }
                 try {
                     int angle;
@@ -248,7 +252,7 @@ public class EditArmorStands extends JavaPlugin {
                             l.setPitch(angle);
                             as.teleport(l);
                         }
-                        player.sendMessage(ChatColor.GREEN + "Set Armor Stand's pitch to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
+                        sender.sendMessage(ChatColor.GREEN + "Set Armor Stand's pitch to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
                         return true;
                     } else if ("rotate".equalsIgnoreCase(args[0])) {
                         Location l = as.getLocation();
@@ -261,19 +265,19 @@ public class EditArmorStands extends JavaPlugin {
                             l.setYaw(angle);
                             as.teleport(l);
                         }
-                        player.sendMessage(ChatColor.GREEN + "Set Armor Stand's rotation to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
+                        sender.sendMessage(ChatColor.GREEN + "Set Armor Stand's rotation to " + ChatColor.YELLOW + angle + ChatColor.GREEN + "!");
                         return true;
                     } else {
-                        player.sendMessage(ChatColor.RED + "Sorry but the option " + args[0] + " doesn't exist!");
+                        sender.sendMessage(ChatColor.RED + "Sorry but the option " + args[0] + " doesn't exist!");
                     }
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Your second argument " + args[1] + " is not a number!");
+                    sender.sendMessage(ChatColor.RED + "Your second argument " + args[1] + " is not a number!");
                 }
             } else {
-                player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
+                sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
             }
         } else if (args.length == 3) {
-            if (player.hasPermission("editarmorstands.command.pose")) {
+            if (sender.hasPermission("editarmorstands.command.pose")) {
                 try {
                     double angle;
                     boolean relative = false;
@@ -292,20 +296,20 @@ public class EditArmorStands extends JavaPlugin {
                         BodyPart bp = BodyPart.fromString(args[0]);
                         Axis a = Axis.fromString(args[1]);
                         double n = new ArmorStandPoser(as).setSingleAngle(bp, a, angle, relative);
-                        player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s " + a.name().toLowerCase() + " to " + ChatColor.YELLOW + n + ChatColor.GREEN + "!");
+                        sender.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + "'s " + a.name().toLowerCase() + " to " + ChatColor.YELLOW + n + ChatColor.GREEN + "!");
                         return true;
                     } catch (IllegalArgumentException e) {
-                        player.sendMessage(ChatColor.RED + e.getMessage());
+                        sender.sendMessage(ChatColor.RED + e.getMessage());
                     }
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Your third argument " + args[2] + " is not a number!");
+                    sender.sendMessage(ChatColor.RED + "Your third argument " + args[2] + " is not a number!");
                 }
             } else {
-                player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
+                sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
             }
         } else if (args.length == 4) {
             if ("move".equalsIgnoreCase(args[0])) {
-                if (player.hasPermission("editarmorstands.command.move")) {
+                if (sender.hasPermission("editarmorstands.command.move")) {
                     Location loc = as.getLocation();
                     int[] blockLoc = new int[]{loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()};
                     double[] locArr = new double[]{loc.getX(), loc.getY(), loc.getZ()};
@@ -319,15 +323,15 @@ public class EditArmorStands extends JavaPlugin {
                             } else {
                                 locArr[i] = Double.parseDouble(args[i + 1]);
                             }
-                            if (Math.floor(locArr[i]) != blockLoc[i] && !player.hasPermission("editarmorstands.command.move.nextblock") && !player.hasPermission("editarmorstands.command.move.unlimited")) {
-                                player.sendMessage(ChatColor.RED + "You can only manipulate the position of an Armor Stands on the " + ChatColor.GOLD + "same block" + ChatColor.RED + ", not move it onto another block! (" + args[i + 1] + " would move it onto another one!)");
+                            if (Math.floor(locArr[i]) != blockLoc[i] && !sender.hasPermission("editarmorstands.command.move.nextblock") && !sender.hasPermission("editarmorstands.command.move.unlimited")) {
+                                sender.sendMessage(ChatColor.RED + "You can only manipulate the position of an Armor Stands on the " + ChatColor.GOLD + "same block" + ChatColor.RED + ", not move it onto another block! (" + args[i + 1] + " would move it onto another one!)");
                                 return false;
-                            } else if (Math.abs(locArr[i] - oldLocArr[i]) > 1 && !player.hasPermission("editarmorstands.command.move.unlimited")) {
-                                player.sendMessage(ChatColor.RED + "You can't move Armor Stands more than " + ChatColor.GOLD + "one block" + ChatColor.RED + "! You inputted " + ChatColor.GOLD + args[i + 1] + ChatColor.RED + "!");
+                            } else if (Math.abs(locArr[i] - oldLocArr[i]) > 1 && !sender.hasPermission("editarmorstands.command.move.unlimited")) {
+                                sender.sendMessage(ChatColor.RED + "You can't move Armor Stands more than " + ChatColor.GOLD + "one block" + ChatColor.RED + "! You inputted " + ChatColor.GOLD + args[i + 1] + ChatColor.RED + "!");
                                 return false;
                             }
                         } catch (NumberFormatException e) {
-                            player.sendMessage(ChatColor.GOLD + args[i + 1].substring(1) + ChatColor.RED + " is not a valid double!");
+                            sender.sendMessage(ChatColor.GOLD + args[i + 1].substring(1) + ChatColor.RED + " is not a valid double!");
                             return false;
                         }
                     }
@@ -335,11 +339,11 @@ public class EditArmorStands extends JavaPlugin {
                     loc.setY(locArr[1]);
                     loc.setZ(locArr[2]);
                     as.teleport(loc);
-                    player.sendMessage(ChatColor.GREEN + "Moved the Armor Stand to " + ChatColor.YELLOW + df.format(loc.getX()) + " / " + ChatColor.YELLOW + df.format(loc.getY()) + " / " + ChatColor.YELLOW + df.format(loc.getZ()) + ChatColor.GREEN + "!");
+                    sender.sendMessage(ChatColor.GREEN + "Moved the Armor Stand to " + ChatColor.YELLOW + df.format(loc.getX()) + " / " + ChatColor.YELLOW + df.format(loc.getY()) + " / " + ChatColor.YELLOW + df.format(loc.getZ()) + ChatColor.GREEN + "!");
                 } else {
-                    player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.move");
+                    sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.move");
                 }
-            } else if (player.hasPermission("editarmorstands.command.pose")) {
+            } else if (sender.hasPermission("editarmorstands.command.pose")) {
                 try {
                     int x;
                     int y;
@@ -378,20 +382,20 @@ public class EditArmorStands extends JavaPlugin {
                     try {
                         BodyPart bp = BodyPart.fromString(args[0]);
                         int[] r = new ArmorStandPoser(as).setEulerAngle(bp, new int[]{x, y, z}, new boolean[]{rx, ry, rz});
-                        player.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + ChatColor.YELLOW + r[0] + " " + r[1] + " " + r[2] + ChatColor.GREEN + "!");
+                        sender.sendMessage(ChatColor.GREEN + "Set " + bp.name().toLowerCase() + " to " + ChatColor.YELLOW + r[0] + " " + r[1] + " " + r[2] + ChatColor.GREEN + "!");
                         return true;
                     } catch (IllegalArgumentException e) {
-                        player.sendMessage(ChatColor.RED + e.getMessage());
+                        sender.sendMessage(ChatColor.RED + e.getMessage());
                     }
 
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "One of " + args[1] + ", " + args[2] + " or " + args[3] + " is not a valid number!");
+                    sender.sendMessage(ChatColor.RED + "One of " + args[1] + ", " + args[2] + " or " + args[3] + " is not a valid number!");
                 }
             } else {
-                player.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
+                sender.sendMessage(ChatColor.RED + "You don't have the permission editarmorstands.command.pose");
             }
         } else {
-            player.sendMessage(ChatColor.RED + "Error. You inputted more then 4 arguments!");
+            sender.sendMessage(ChatColor.RED + "Error. You inputted more then 4 arguments!");
         }
         return false;
     }

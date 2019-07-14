@@ -7,6 +7,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -47,13 +48,22 @@ public class EditArmorStandsCommand implements TabExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
+        if (sender instanceof Player || sender instanceof ArmorStand) {
+            Player p = null;
+            if (sender instanceof Player) {
+                p = (Player) sender;
+            }
 
             if (args.length == 0) {
+                if (p == null) {
+                    return false;
+                }
                 sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
                 plugin.addWaitingAction(p, args);
             } else if ("exit".equalsIgnoreCase(args[0])) {
+                if (p == null) {
+                    return false;
+                }
                 if (plugin.isPersistent(p)) {
                     sender.sendMessage(ChatColor.GREEN + "Disabled persistent mode!");
                 } else if (plugin.hasWaitingAction(p)) {
@@ -130,6 +140,9 @@ public class EditArmorStandsCommand implements TabExecutor {
                 for (String s : usage)
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
             } else if ("persist".equalsIgnoreCase(args[0])) {
+                if (p == null) {
+                    return false;
+                }
                 plugin.enablePersistent(p);
                 sender.sendMessage(ChatColor.GREEN + "Enabled persistent mode. Disable via " + ChatColor.YELLOW + "/eas exit");
             } else {
@@ -140,7 +153,7 @@ public class EditArmorStandsCommand implements TabExecutor {
                         return true;
                     }
                     if (args.length == 1) {
-                        Vector direction = ((Player) sender).getEyeLocation().getDirection();
+                        Vector direction = ((LivingEntity) sender).getEyeLocation().getDirection();
                         args = new String[]{
                                 args[0],
                                 "vector:" + direction.getX() + ":" + direction.getY() + ":" + direction.getZ()
@@ -172,7 +185,7 @@ public class EditArmorStandsCommand implements TabExecutor {
                             return true;
                         }
                         if ("paste".equalsIgnoreCase(args[0])) {
-                            if (plugin.getClipboard(((Player) sender).getUniqueId()) == null) {
+                            if (plugin.getClipboard(((LivingEntity) sender).getUniqueId()) == null) {
                                 sender.sendMessage(ChatColor.RED + "You don't have a copy in your clipboard?");
                                 return true;
                             }
@@ -189,28 +202,32 @@ public class EditArmorStandsCommand implements TabExecutor {
                     }
                 }
 
-                UUID asid = plugin.getSelection(p);
-                if (asid != null) {
-                    ArmorStand as = null;
-                    for (Entity e : p.getWorld().getNearbyEntities(p.getLocation(), 64, 64, 64, e -> e.getType() == EntityType.ARMOR_STAND && e.getUniqueId() == asid)) {
-                        as = (ArmorStand) e;
-                        break;
-                    }
-                    if (as != null) {
-                        plugin.calculateAction(p, as, args);
-                    } else {
-                        sender.sendMessage(ChatColor.RED + "You can only edit Armor Stands in a 64 block radius!");
-                    }
-                } else if (plugin.isPersistent(p)) {
-                    sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to edit!");
-                    plugin.setPersistentAction(p, args);
+                if (p == null) {
+                    plugin.calculateAction(p, (ArmorStand) sender, args);
                 } else {
-                    sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to " + args[0].toLowerCase() + " in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
-                    plugin.addWaitingAction(p, args);
+                    UUID asid = plugin.getSelection(p);
+                    if (asid != null) {
+                        ArmorStand as = null;
+                        for (Entity e : p.getWorld().getNearbyEntities(p.getLocation(), 64, 64, 64, e -> e.getType() == EntityType.ARMOR_STAND && e.getUniqueId() == asid)) {
+                            as = (ArmorStand) e;
+                            break;
+                        }
+                        if (as != null) {
+                            plugin.calculateAction(p, as, args);
+                        } else {
+                            sender.sendMessage(ChatColor.RED + "You can only edit Armor Stands in a 64 block radius!");
+                        }
+                    } else if (plugin.isPersistent(p)) {
+                        sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to edit!");
+                        plugin.setPersistentAction(p, args);
+                    } else {
+                        sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to " + args[0].toLowerCase() + " in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
+                        plugin.addWaitingAction(p, args);
+                    }
                 }
             }
         } else {
-            sender.sendMessage(ChatColor.RED + "This command can only be run by a player!");
+            sender.sendMessage(ChatColor.RED + "This command can only be run by a player or ArmorStand!");
         }
         return true;
     }
