@@ -60,6 +60,7 @@ public class ArmorStandGui implements Listener {
             Material.GOLDEN_HELMET,
             Material.DIAMOND_HELMET,
             Material.CHAINMAIL_HELMET,
+            Material.NETHERITE_HELMET,
             Material.TURTLE_HELMET,
             Material.CREEPER_HEAD,
             Material.DRAGON_HEAD,
@@ -79,6 +80,7 @@ public class ArmorStandGui implements Listener {
             Material.GOLDEN_CHESTPLATE,
             Material.DIAMOND_CHESTPLATE,
             Material.CHAINMAIL_CHESTPLATE,
+            Material.NETHERITE_CHESTPLATE,
             Material.ELYTRA
     ));
 
@@ -90,7 +92,8 @@ public class ArmorStandGui implements Listener {
             Material.IRON_LEGGINGS,
             Material.GOLDEN_LEGGINGS,
             Material.DIAMOND_LEGGINGS,
-            Material.CHAINMAIL_LEGGINGS
+            Material.CHAINMAIL_LEGGINGS,
+            Material.NETHERITE_LEGGINGS
     ));
 
     /**
@@ -101,7 +104,8 @@ public class ArmorStandGui implements Listener {
             Material.IRON_BOOTS,
             Material.GOLDEN_BOOTS,
             Material.DIAMOND_BOOTS,
-            Material.CHAINMAIL_BOOTS
+            Material.CHAINMAIL_BOOTS,
+            Material.NETHERITE_BOOTS
     ));
 
     /**
