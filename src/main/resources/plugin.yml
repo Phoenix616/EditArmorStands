@@ -42,6 +42,8 @@ permissions:
          editarmorstands.command.*: true
          editarmorstands.nametag.*: true
          editarmorstands.openinventory: true
+         editarmorstands.bypass.bindingcurse: true
+         editarmorstands.bypass.slotrestrictions: true
    editarmorstands.user:
       description: A collection of permissions a normal user should have.
       children:
@@ -183,4 +185,10 @@ permissions:
       default: op
    editarmorstands.openinventory:
       description: Allows a player to open the inventory via rightclicking on an armor stand
+      default: op
+   editarmorstands.bypass.bindingcurse:
+      description: Allows a player to modify items with the curse of binding in the inventory gui
+      default: op
+   editarmorstands.bypass.slotrestrictions:
+      description: Allows a player to bypass vanilla slot restrictions in the inventory gui
       default: op

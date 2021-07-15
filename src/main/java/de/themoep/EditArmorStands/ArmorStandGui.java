@@ -280,7 +280,9 @@ public class ArmorStandGui implements Listener {
      */
     private boolean isBound(int slot) {
         if (player.getGameMode() != GameMode.CREATIVE // Players in creative mode can remove the item
-                && SLOTS_PLAYER.contains(slot)) { // Check if the slot is a player armor slot
+                && SLOTS_PLAYER.contains(slot) // Check if the slot is a player armor slot
+                && !player.hasPermission("editarmorstands.bypass.bindingcurse")
+        ) {
             ItemStack item = getSlotItem(slot);
             return item != null && item.containsEnchantment(Enchantment.BINDING_CURSE); // Check for the enchantment
         }
@@ -301,7 +303,7 @@ public class ArmorStandGui implements Listener {
     }
 
     private boolean setSlot(int slot, ItemStack item) {
-        if (isValidItem(slot, item)) {
+        if (isValidItem(slot, item) || player.hasPermission("editarmorstands.bypass.slotrestrictions")) {
             switch (slot) {
                 case 4:
                     armorStand.setHelmet(item);
@@ -428,7 +430,9 @@ public class ArmorStandGui implements Listener {
         int swap = getSwap(slot);
         ItemStack slotItem = getSlotItem(slot);
         ItemStack item = getSlotItem(swap);
-        if (!isBound(slot) && !isBound(swap) && isValidItem(slot, item) && setSlot(swap, slotItem)) {
+        if (!isBound(slot) && !isBound(swap)
+                && (isValidItem(slot, item) || player.hasPermission("editarmorstands.bypass.slotrestrictions"))
+                && setSlot(swap, slotItem)) {
             return item;
         }
         throw new ItemNotSuitable();
