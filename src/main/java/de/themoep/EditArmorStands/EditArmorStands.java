@@ -2,6 +2,9 @@ package de.themoep.EditArmorStands;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import de.themoep.minedown.adventure.MineDown;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -68,14 +71,14 @@ public class EditArmorStands extends JavaPlugin {
         } else if ("name".equalsIgnoreCase(args[0])) {
             if (sender.hasPermission("editarmorstands.command.name")) {
                 if (args.length > 1) {
-                    String name = "";
-                    for (int i = 1; i < args.length; i++) {
-                        name += args[i] + " ";
-                    }
+                    String name = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
+                    Component nameComponent;
                     if (sender.hasPermission("editarmorstands.command.name.colored")) {
-                        name = ChatColor.translateAlternateColorCodes('&', name);
+                        nameComponent = MineDown.parse(name.trim());
+                    } else {
+                        nameComponent = PlainTextComponentSerializer.plainText().deserialize(name);
                     }
-                    as.setCustomName(name.trim() + ChatColor.RESET);
+                    as.customName(nameComponent);
                     sender.sendMessage(ChatColor.GREEN + "Set the Armor Stand's name to " + ChatColor.RESET + as.getCustomName() + ChatColor.GREEN + "!");
                 } else {
                     as.setCustomName(null);
