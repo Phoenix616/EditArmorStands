@@ -185,7 +185,7 @@ public class ArmorStandGui implements Listener {
                 // Click is in GUI inventory
                 if (event.getSlot() == 8) {
                     event.setCancelled(true);
-                    plugin.getServer().getScheduler().runTask(plugin, player::closeInventory);
+                    plugin.getServer().getScheduler().runTask(plugin, () -> player.closeInventory());
                     return;
                 }
 
