@@ -1,0 +1,43 @@
+# Items allowed to be placed in armor slots
+armor:
+  head:
+    - leather_helmet
+    - iron_helmet
+    - copper_helmet
+    - golden_helmet
+    - diamond_helmet
+    - chainmail_helmet
+    - netherite_helmet
+    - turtle_helmet
+    - creeper_head
+    - dragon_head
+    - player_head
+    - zombie_head
+    - skeleton_skull
+    - wither_skeleton_skull
+    - pumpkin
+  chest:
+    - leather_chestplate
+    - iron_chestplate
+    - copper_chestplate
+    - golden_chestplate
+    - diamond_chestplate
+    - chainmail_chestplate
+    - netherite_chestplate
+    - elytra
+  legs:
+    - leather_leggings
+    - iron_leggings
+    - copper_leggings
+    - golden_leggings
+    - diamond_leggings
+    - chainmail_leggings
+    - netherite_leggings
+  feet:
+    - leather_boots
+    - iron_boots
+    - copper_boots
+    - golden_boots
+    - diamond_boots
+    - chainmail_boots
+    - netherite_boots

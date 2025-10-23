@@ -7,10 +7,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -18,6 +20,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +47,26 @@ import java.util.stream.Collectors;
 
 public class EditArmorStands extends JavaPlugin {
 
+    /**
+     * All the materials that can be put in the head slot
+     */
+    private final Set<Material> head = new HashSet<>();
+
+    /**
+     * All the materials that can be put in the chest slot
+     */
+    private final Set<Material> chest = new HashSet<>();
+
+    /**
+     * All the materials that can be put in the legs slot
+     */
+    private final Set<Material> legs = new HashSet<>();
+
+    /**
+     * All the materials that can be put in the feet slot
+     */
+    private final Set<Material> feet = new HashSet<>();
+
     private Map<UUID, UUID> selectedArmorStands = new HashMap<>();
 
     private Cache<UUID, String[]> waitingCommands = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
@@ -55,8 +78,30 @@ public class EditArmorStands extends JavaPlugin {
     private static DecimalFormat df = new DecimalFormat("#.##");
 
     public void onEnable() {
+        loadConfig();
         getServer().getPluginManager().registerEvents(new ArmorStandListener(this), this);
         getCommand("editarmorstand").setExecutor(new EditArmorStandsCommand(this));
+    }
+
+    public void loadConfig() {
+        saveDefaultConfig();
+        reloadConfig();
+        loadItemSet(head, "armor.head");
+        loadItemSet(chest, "armor.chest");
+        loadItemSet(legs, "armor.legs");
+        loadItemSet(feet, "armor.feet");
+    }
+
+    private void loadItemSet(Set<Material> set, String configPath) {
+        set.clear();
+        for (String itemString : getConfig().getStringList(configPath)) {
+            Material type = Material.matchMaterial(itemString);
+            if (type != null) {
+                set.add(type);
+            } else {
+                getLogger().warning(configPath + " contains unknown item type " + itemString);
+            }
+        }
     }
 
     boolean calculateAction(LivingEntity sender, ArmorStand as, String[] args) {
@@ -513,5 +558,24 @@ public class EditArmorStands extends JavaPlugin {
                 it.remove();
             }
         }
+    }
+
+    /**
+     * Check if an item can be put into a certain slots
+     * @param slot The slot
+     * @param item The item
+     * @return True if it's a valid item type or false if not
+     */
+    public boolean isValidItem(int slot, ItemStack item) {
+        boolean empty = item == null || item.getType() == Material.AIR;
+        return switch (slot) {
+            case 4 -> empty || head.contains(item.getType()) || item.getType().isBlock();
+            case 7 -> empty || head.contains(item.getType());
+            case 12, 14 -> true;
+            case 13, 16 -> empty || chest.contains(item.getType());
+            case 22, 25 -> empty || legs.contains(item.getType());
+            case 31, 34 -> empty || feet.contains(item.getType());
+            default -> false;
+        };
     }
 }

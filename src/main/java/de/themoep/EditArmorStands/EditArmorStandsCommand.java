@@ -60,6 +60,9 @@ public class EditArmorStandsCommand implements TabExecutor {
                 }
                 sender.sendMessage(ChatColor.GREEN + "Rightclick on the Armor Stand you want to edit in the next " + ChatColor.YELLOW + "10s" + ChatColor.GREEN + "!");
                 plugin.addWaitingAction(p, args);
+            } else if ("reload".equalsIgnoreCase(args[0])) {
+                plugin.loadConfig();
+                sender.sendMessage(ChatColor.GREEN + "Reloaded config.");
             } else if ("exit".equalsIgnoreCase(args[0])) {
                 if (p == null) {
                     return false;

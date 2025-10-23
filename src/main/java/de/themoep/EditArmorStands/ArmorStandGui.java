@@ -25,9 +25,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -50,63 +48,6 @@ public class ArmorStandGui implements Listener {
     private final EditArmorStands plugin;
     private final ArmorStand armorStand;
     private final Player player;
-
-    /**
-     * All the materials that can be put on the head in Vanilla
-     */
-    private final static Set<Material> HELMETS = new HashSet<>(Arrays.asList(
-            Material.LEATHER_HELMET,
-            Material.IRON_HELMET,
-            Material.GOLDEN_HELMET,
-            Material.DIAMOND_HELMET,
-            Material.CHAINMAIL_HELMET,
-            Material.NETHERITE_HELMET,
-            Material.TURTLE_HELMET,
-            Material.CREEPER_HEAD,
-            Material.DRAGON_HEAD,
-            Material.PLAYER_HEAD,
-            Material.ZOMBIE_HEAD,
-            Material.SKELETON_SKULL,
-            Material.WITHER_SKELETON_SKULL,
-            Material.PUMPKIN
-    ));
-
-    /**
-     * All the materials that can be put on the chest in Vanilla
-     */
-    private final static Set<Material> CHESTPLATES = new HashSet<>(Arrays.asList(
-            Material.LEATHER_CHESTPLATE,
-            Material.IRON_CHESTPLATE,
-            Material.GOLDEN_CHESTPLATE,
-            Material.DIAMOND_CHESTPLATE,
-            Material.CHAINMAIL_CHESTPLATE,
-            Material.NETHERITE_CHESTPLATE,
-            Material.ELYTRA
-    ));
-
-    /**
-     * All the materials that can be put on the legs in Vanilla
-     */
-    private final static Set<Material> PANTS = new HashSet<>(Arrays.asList(
-            Material.LEATHER_LEGGINGS,
-            Material.IRON_LEGGINGS,
-            Material.GOLDEN_LEGGINGS,
-            Material.DIAMOND_LEGGINGS,
-            Material.CHAINMAIL_LEGGINGS,
-            Material.NETHERITE_LEGGINGS
-    ));
-
-    /**
-     * All the materials that can be put on the feet in Vanilla
-     */
-    private final static Set<Material> BOOTS = new HashSet<>(Arrays.asList(
-            Material.LEATHER_BOOTS,
-            Material.IRON_BOOTS,
-            Material.GOLDEN_BOOTS,
-            Material.DIAMOND_BOOTS,
-            Material.CHAINMAIL_BOOTS,
-            Material.NETHERITE_BOOTS
-    ));
 
     /**
      * All the slots that make up the armor stand's armor in the GUI
@@ -260,7 +201,7 @@ public class ArmorStandGui implements Listener {
                     slots.add(14);
                     for (int i : slots) {
                         ItemStack target = event.getWhoClicked().getOpenInventory().getTopInventory().getItem(i);
-                        if ((target == null || target.getType() == Material.AIR) && isValidItem(i, event.getCurrentItem())) {
+                        if ((target == null || target.getType() == Material.AIR) && plugin.isValidItem(i, event.getCurrentItem())) {
                             if (setSlot(i, event.getCurrentItem())) {
                                 event.getWhoClicked().getInventory().setItem(event.getSlot(), null);
                                 build();
@@ -303,7 +244,7 @@ public class ArmorStandGui implements Listener {
     }
 
     private boolean setSlot(int slot, ItemStack item) {
-        if (isValidItem(slot, item) || player.hasPermission("editarmorstands.bypass.slotrestrictions")) {
+        if (plugin.isValidItem(slot, item) || player.hasPermission("editarmorstands.bypass.slotrestrictions")) {
             switch (slot) {
                 case 4:
                     armorStand.setHelmet(item);
@@ -431,7 +372,7 @@ public class ArmorStandGui implements Listener {
         ItemStack slotItem = getSlotItem(slot);
         ItemStack item = getSlotItem(swap);
         if (!isBound(slot) && !isBound(swap)
-                && (isValidItem(slot, item) || player.hasPermission("editarmorstands.bypass.slotrestrictions"))
+                && (plugin.isValidItem(slot, item) || player.hasPermission("editarmorstands.bypass.slotrestrictions"))
                 && setSlot(swap, slotItem)) {
             return item;
         }
@@ -446,30 +387,6 @@ public class ArmorStandGui implements Listener {
             swap = SLOTS_ARMORS.get(SLOTS_PLAYER.indexOf(slot));
         }
         return swap;
-    }
-
-    private boolean isValidItem(int slot, ItemStack itemStack) {
-        boolean empty = itemStack == null || itemStack.getType() == Material.AIR;
-        switch (slot) {
-            case 4:
-                return empty || HELMETS.contains(itemStack.getType()) || itemStack.getType().isBlock();
-            case 7:
-                return empty || HELMETS.contains(itemStack.getType());
-            case 12:
-            case 14:
-                return true;
-            case 13:
-            case 16:
-                return empty || CHESTPLATES.contains(itemStack.getType());
-            case 22:
-            case 25:
-                return empty || PANTS.contains(itemStack.getType());
-            case 31:
-            case 34:
-                return empty || BOOTS.contains(itemStack.getType());
-            default:
-                return false;
-        }
     }
 
     @EventHandler

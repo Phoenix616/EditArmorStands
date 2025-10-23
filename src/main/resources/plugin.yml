@@ -34,6 +34,8 @@ commands:
               - Set all angles of a body part at once, use ~ for relatives
              Bodyparts: head, body, leftarm, rightarm, leftleg, rightleg.
              (r, y, p, h, ra, ll etc. are possible!)
+             /<command> reload
+              - Reload the config
       permissions: editarmorstands.command
 permissions:
    editarmorstands.*:
@@ -41,6 +43,7 @@ permissions:
       children:
          editarmorstands.command.*: true
          editarmorstands.nametag.*: true
+         editarmorstands.command.reload: true
          editarmorstands.openinventory: true
          editarmorstands.bypass.bindingcurse: true
          editarmorstands.bypass.slotrestrictions: true
@@ -173,6 +176,9 @@ permissions:
       default: op
    editarmorstands.command.move.unlimited:
       description: Allows a player to move an armorstand unlimited blocks away
+      default: op
+   editarmorstands.command.reload:
+      description: Allows a player to reload the plugin
       default: op
    editarmorstands.nametag.name:
       description: Allows a player to name armorstands via rightclick with a nametag
